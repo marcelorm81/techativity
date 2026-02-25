@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
 import { blobPath } from '../../lib/blob-generator';
+import TechativityLogo from '../TechativityLogo';
 
 interface JoinFormProps {
   onJoin: (name: string, role: string, sessionCode?: string) => void;
@@ -90,9 +91,14 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
         transition={{ duration: 0.6 }}
       >
         {/* Logo / title */}
-        <div className="text-center mb-8">
+        <div className="flex flex-col items-center mb-8">
+          <TechativityLogo
+            color={C.accentOlive}
+            width="260px"
+            className="mb-3"
+          />
           <motion.div
-            className="inline-block px-3 py-1 rounded-full mb-3"
+            className="inline-block px-3 py-1 rounded-full"
             style={{
               backgroundColor: C.sagePale,
               fontFamily: "'Consolas', monospace",
@@ -107,17 +113,6 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
           >
             Live session
           </motion.div>
-          <h1
-            style={{
-              fontFamily: "'Georgia', serif",
-              fontSize: '1.7rem',
-              fontWeight: 'bold',
-              color: C.black,
-              lineHeight: 1.2,
-            }}
-          >
-            Techativity
-          </h1>
           <p
             className="mt-2"
             style={{

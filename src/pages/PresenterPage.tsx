@@ -5,6 +5,7 @@ import { useSlideNavigation } from '../hooks/useSlideNavigation';
 import { useAnswerSubscription } from '../hooks/useAnswerSubscription';
 import { usePresenterSession } from '../hooks/usePresenterSession';
 import SlideRenderer from '../components/slides/SlideRenderer';
+import TechativityLogo from '../components/TechativityLogo';
 import { SLIDES } from '../data/slides-data';
 import { QRCodeSVG } from 'qrcode.react';
 import { C } from '../lib/design-system';
@@ -120,18 +121,12 @@ export default function PresenterPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1
-            style={{
-              fontFamily: "'Georgia', serif",
-              fontSize: '2rem',
-              fontWeight: 'bold',
-              color: C.white,
-            }}
-          >
-            Techativity
-          </h1>
+          <TechativityLogo
+            color={C.sage}
+            width="320px"
+            className="mb-2"
+          />
           <p
-            className="mt-2"
             style={{
               fontFamily: "'Calibri', sans-serif",
               fontSize: '0.9rem',
