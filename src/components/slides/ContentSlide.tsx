@@ -4,6 +4,7 @@ import { C, F } from '../../lib/design-system';
 import { SHAPES, TEXT_SHAPES } from '../../lib/organic-shapes';
 import type { OrganicShape } from '../../lib/organic-shapes';
 import { Pill, SlideNumber } from './SlideContainer';
+import { StaticOrganicShape } from '../common/MorphingShape';
 import type { ContentSlide as ContentSlideData } from '../../data/slides-data';
 
 const stagger = {
@@ -32,21 +33,21 @@ function ShapeCard({
   content: string;
   index: number;
 }) {
-  const floatDuration = 7 + index * 1.5;
+  const floatDuration = 10 + index * 2;
   const phase = index * 0.3;
 
   return (
     <motion.div
       className="relative flex-1 flex items-center justify-center"
-      style={{ minHeight: '280px' }}
+      style={{ minHeight: '320px' }}
       variants={fadeUp}
     >
       {/* Organic shape background */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         animate={{
-          y: [0, -3, 0, 2, 0],
-          rotate: [0, 1, 0, -1, 0],
+          y: [0, -4, 0, 3, 0],
+          rotate: [0, 0.7, 0, -0.7, 0],
         }}
         transition={{
           duration: floatDuration,
@@ -122,6 +123,23 @@ export default function ContentSlide({
 
   return (
     <div className="absolute inset-0 flex flex-col px-[7%] py-[5%] overflow-hidden">
+      {/* Decorative face shape for dark slides */}
+      {isDark && (
+        <StaticOrganicShape
+          shape={SHAPES.face}
+          fill={C.white}
+          opacity={0.07}
+          floatAmp={3}
+          floatDuration={14}
+          style={{
+            right: '-5%',
+            top: '5%',
+            width: '45%',
+            height: '80%',
+          }}
+        />
+      )}
+
       <motion.div variants={stagger} initial="hidden" animate="show" className="flex-1 flex flex-col">
         {/* Pill */}
         {slide.pill && (
@@ -209,6 +227,24 @@ export default function ContentSlide({
                 shape={CARD_SHAPES[i % CARD_SHAPES.length]}
                 title={card.title}
                 content={card.content}
+                index={i}
+              />
+            ))}
+          </motion.div>
+        )}
+
+        {/* Columns layout (e.g., "Notice the gap" 3-column) */}
+        {slide.columns && slide.columns.length > 0 && (
+          <motion.div
+            variants={fadeUp}
+            className="mt-auto flex gap-4 items-stretch"
+          >
+            {slide.columns.map((col, i) => (
+              <ShapeCard
+                key={i}
+                shape={CARD_SHAPES[i % CARD_SHAPES.length]}
+                title={col.title}
+                content={col.items.join('\n')}
                 index={i}
               />
             ))}

@@ -129,30 +129,7 @@ export const SLIDES: Slide[] = [
     note: "AI is just a mirror.",
   } as ContentSlide,
 
-  // Slide 2 (Index 2) - Slide 3 in presentation
-  {
-    id: 2,
-    type: "content",
-    bgMode: "cream",
-    pill: "The mirror",
-    heading: "AI helps us see clearly.",
-    cards: [
-      {
-        title: "Expose",
-        content: "What is operational vs what is essential",
-      },
-      {
-        title: "Reveal",
-        content: "Where meaning actually lives",
-      },
-      {
-        title: "Force",
-        content: "Better questions, not faster answers",
-      },
-    ],
-  } as ContentSlide,
-
-  // Slide 3 (Index 3) - Slide 4 in presentation - SECTION 1
+  // Slide 2 (Index 2) - SECTION 1 "The Experiment"
   {
     id: 3,
     type: "section",
@@ -233,7 +210,30 @@ export const SLIDES: Slide[] = [
     theme: "meaning",
   } as AnswersSlide,
 
-  // Slide 11 (Index 11) - Slide 9 in presentation
+  // Slide 10 (Index 10) - "AI helps us see clearly" (moved from before Section 1)
+  {
+    id: 2,
+    type: "content",
+    bgMode: "cream",
+    pill: "The mirror",
+    heading: "AI helps us see clearly.",
+    cards: [
+      {
+        title: "Expose",
+        content: "What is operational vs what is essential",
+      },
+      {
+        title: "Reveal",
+        content: "Where meaning actually lives",
+      },
+      {
+        title: "Force",
+        content: "Better questions, not faster answers",
+      },
+    ],
+  } as ContentSlide,
+
+  // Slide 11 (Index 11) - "Notice the gap"
   {
     id: 11,
     type: "content",

@@ -10,11 +10,11 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
     <div className="absolute inset-0 flex overflow-hidden">
       {/* Left: organic shapes + thank you */}
       <div className="relative w-[45%] h-full overflow-hidden">
-        {/* Primary shape */}
+        {/* Primary shape — white on dark bg */}
         <StaticOrganicShape
           shape={SHAPES.bird}
-          fill={C.olive}
-          opacity={0.2}
+          fill={C.white}
+          opacity={0.1}
           floatAmp={4}
           floatDuration={9}
           style={{
@@ -27,8 +27,8 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
         {/* Secondary shape */}
         <StaticOrganicShape
           shape={SHAPES.sun}
-          fill={C.olive}
-          opacity={0.1}
+          fill={C.white}
+          opacity={0.07}
           floatAmp={4}
           floatDuration={12}
           phase={0.4}
@@ -46,7 +46,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
               fontFamily: F.title,
               fontSize: 'clamp(3rem, 6vw, 4.5rem)',
               fontWeight: 400,
-              color: C.olive,
+              color: C.white,
               lineHeight: 0.95,
               whiteSpace: 'pre-line',
             }}
@@ -62,7 +62,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
             style={{
               fontFamily: F.body,
               fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
-              color: C.olive,
+              color: C.white,
               opacity: 0.5,
               lineHeight: 1.6,
               whiteSpace: 'pre-line',

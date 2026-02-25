@@ -8,13 +8,13 @@ import type { StatementSlide as StatementSlideData } from '../../data/slides-dat
 export default function StatementSlide({ slide }: { slide: StatementSlideData }) {
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Large decorative organic shape — right side */}
+      {/* Large decorative organic shape — right side, white on olive bg */}
       <StaticOrganicShape
         shape={SHAPES.bird}
-        fill={C.olive}
-        opacity={0.15}
+        fill={C.white}
+        opacity={0.08}
         floatAmp={4}
-        floatDuration={10}
+        floatDuration={12}
         style={{
           right: '-8%',
           top: '5%',
@@ -25,7 +25,7 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
 
       {/* Content — left-aligned, vertically centered */}
       <div className="absolute inset-0 flex flex-col justify-center pl-[8%] pr-[50%]">
-        {/* Small label */}
+        {/* Small label pill — white border on olive bg */}
         <motion.div
           className="mb-6"
           initial={{ opacity: 0, y: -8 }}
@@ -35,24 +35,24 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
           <span
             className="inline-block px-5 py-2 rounded-full"
             style={{
-              backgroundColor: C.creamDark,
+              backgroundColor: 'rgba(255,255,255,0.15)',
               fontFamily: F.body,
               fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
               letterSpacing: '0.08em',
-              color: C.olive,
+              color: C.white,
             }}
           >
-            {slide.heading?.split('\n')[0] || 'Before we start'}
+            {slide.heading?.split('\n')[0] || 'Statement'}
           </span>
         </motion.div>
 
-        {/* Main statement text — very large Gambarino */}
+        {/* Main statement text — very large Gambarino, white */}
         <motion.h1
           style={{
             fontFamily: F.title,
             fontSize: 'clamp(2.8rem, 6vw, 5rem)',
             fontWeight: 400,
-            color: C.olive,
+            color: C.white,
             lineHeight: 1.05,
             whiteSpace: 'pre-line',
           }}
@@ -70,7 +70,7 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
             style={{
               fontFamily: F.body,
               fontSize: 'clamp(1.1rem, 1.6vw, 1.4rem)',
-              color: C.olive,
+              color: C.white,
               opacity: 0.6,
               lineHeight: 1.6,
               whiteSpace: 'pre-line',
