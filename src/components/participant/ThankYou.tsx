@@ -1,28 +1,34 @@
-// ThankYou.tsx — Session complete screen with participant's 3 blob shapes
+// ThankYou.tsx — Session complete screen with participant's 3 organic shapes
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { themedShapePath, hashToSeed, type QuestionTheme } from '../../lib/blob-generator';
+import { hashToSeed } from '../../lib/blob-generator';
+import { SHAPES, SHAPE_KEYS } from '../../lib/organic-shapes';
+import type { OrganicShape } from '../../lib/organic-shapes';
 
 interface ThankYouProps {
   name: string;
 }
 
-const THEMES: { key: QuestionTheme; label: string; color: string }[] = [
-  { key: 'identity', label: 'Identity', color: C.sage },
-  { key: 'reality', label: 'Reality', color: C.warmGray },
-  { key: 'meaning', label: 'Meaning', color: C.sageLight },
+const THEME_DISPLAY: { label: string; color: string }[] = [
+  { label: 'Identity', color: C.sage },
+  { label: 'Reality', color: C.warmGray },
+  { label: 'Meaning', color: C.sageLight },
 ];
 
 export default function ThankYou({ name }: ThankYouProps) {
   const seed = useMemo(() => hashToSeed(name), [name]);
 
+  // Pick 3 shapes seeded by participant name
   const shapes = useMemo(
     () =>
-      THEMES.map((t) => ({
-        ...t,
-        shape: themedShapePath(0, 0, 35, t.key, seed),
-      })),
+      THEME_DISPLAY.map((t, i) => {
+        const shapeKey = SHAPE_KEYS[(seed + i) % SHAPE_KEYS.length];
+        return {
+          ...t,
+          shape: SHAPES[shapeKey],
+        };
+      }),
     [seed]
   );
 
@@ -37,11 +43,11 @@ export default function ThankYou({ name }: ThankYouProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        {/* Three shapes in a row */}
+        {/* Three organic shapes in a row */}
         <div className="flex items-center gap-5 mb-6">
-          {shapes.map(({ key, label, color, shape }, i) => (
+          {shapes.map(({ label, color, shape }, i) => (
             <motion.div
-              key={key}
+              key={label}
               className="flex flex-col items-center"
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -66,15 +72,17 @@ export default function ThankYou({ name }: ThankYouProps) {
                 }}
               >
                 <svg
-                  viewBox="-40 -40 80 80"
+                  viewBox={shape.viewBox}
                   className="w-full h-full"
                   style={{ overflow: 'visible' }}
+                  preserveAspectRatio="xMidYMid meet"
                 >
                   <path
-                    d={shape.path}
+                    d={shape.d}
                     fill={color}
                     opacity={0.5}
-                    transform={shape.transform}
+                    fillRule={shape.fillRule}
+                    clipRule={shape.clipRule}
                   />
                 </svg>
               </motion.div>

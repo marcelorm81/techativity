@@ -1,8 +1,10 @@
-// AnswersSlide.tsx — Live answer visualization with force-directed blob garden
+// AnswersSlide.tsx — Live answer visualization with organic shape garden
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { themedShapePath, type QuestionTheme } from '../../lib/blob-generator';
+import type { QuestionTheme } from '../../lib/blob-generator';
+import { ANSWER_SHAPES, SHAPES } from '../../lib/organic-shapes';
+import type { OrganicShape } from '../../lib/organic-shapes';
 import { useBlobLayout } from '../../hooks/useBlobLayout';
 import type { AnswersSlide as AnswersSlideData } from '../../data/slides-data';
 import type { Answer } from '../../hooks/useAnswerSubscription';
@@ -24,6 +26,11 @@ function getFillForAnswer(theme: QuestionTheme, seed: number): string {
   return fills[seed % fills.length];
 }
 
+function getShapeForAnswer(theme: QuestionTheme, seed: number): OrganicShape {
+  const shapes = ANSWER_SHAPES[theme] || [SHAPES.sun, SHAPES.bird, SHAPES.mountain];
+  return shapes[seed % shapes.length];
+}
+
 // ─── Individual answer blob ──────────────────────────────────────────
 
 interface BlobItemProps {
@@ -38,8 +45,8 @@ interface BlobItemProps {
 
 function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) {
   const shape = useMemo(
-    () => themedShapePath(0, 0, radius * 1.8, theme, answer.seed),
-    [radius, theme, answer.seed]
+    () => getShapeForAnswer(theme, answer.seed),
+    [theme, answer.seed]
   );
 
   const fill = useMemo(
@@ -82,6 +89,9 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
   const phase = (answer.seed % 100) / 100;
   const floatDuration = 4 + phase * 3;
 
+  // Scale the organic shape to fit within the answer blob radius
+  const shapeScale = (radius * 2) / Math.max(shape.width, shape.height);
+
   return (
     <motion.div
       style={{
@@ -117,22 +127,27 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
       layout
     >
       <svg
-        viewBox={`${-radius} ${-radius} ${radius * 2} ${radius * 2}`}
+        viewBox={`0 0 ${radius * 2} ${radius * 2}`}
         xmlns="http://www.w3.org/2000/svg"
         style={{ width: '100%', height: '100%', overflow: 'visible' }}
       >
-        {/* Shape */}
-        <path
-          d={shape.path}
-          fill={fill}
-          opacity={0.55}
-          transform={shape.transform}
-        />
+        {/* Organic shape background */}
+        <g
+          transform={`translate(${radius - (shape.width * shapeScale) / 2}, ${radius - (shape.height * shapeScale) / 2}) scale(${shapeScale})`}
+        >
+          <path
+            d={shape.d}
+            fill={fill}
+            opacity={0.55}
+            fillRule={shape.fillRule}
+            clipRule={shape.clipRule}
+          />
+        </g>
 
         {/* Name */}
         <text
-          x={0}
-          y={-lines.length * textFontSize * 0.6}
+          x={radius}
+          y={radius - lines.length * textFontSize * 0.6}
           textAnchor="middle"
           fontFamily="'Georgia', serif"
           fontWeight="bold"
@@ -147,8 +162,8 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
         {lines.map((line, i) => (
           <text
             key={i}
-            x={0}
-            y={-lines.length * textFontSize * 0.6 + nameFontSize * 1.4 + i * textFontSize * 1.25}
+            x={radius}
+            y={radius - lines.length * textFontSize * 0.6 + nameFontSize * 1.4 + i * textFontSize * 1.25}
             textAnchor="middle"
             fontFamily="'Calibri', 'Helvetica Neue', sans-serif"
             fontSize={textFontSize}
@@ -205,6 +220,9 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
     meaning: '"At the end of a really good week, what makes you feel \'that was good work\'?"',
   };
 
+  // Waiting placeholder shapes
+  const placeholderShape = SHAPES.sun;
+
   return (
     <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: C.warmWhite }}>
       {/* Header */}
@@ -256,7 +274,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
         </motion.p>
       </div>
 
-      {/* Blob garden area */}
+      {/* Shape garden area */}
       <div
         ref={containerRef}
         className="flex-1 relative mx-[4%] my-[1.5%] rounded-2xl overflow-hidden"
@@ -271,7 +289,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {/* Animated placeholder blobs */}
+              {/* Animated placeholder organic shapes */}
               <div className="relative w-32 h-32">
                 <motion.div
                   className="absolute inset-0"
@@ -281,8 +299,8 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                   }}
                   transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                 >
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle cx="50" cy="50" r="35" fill={C.sage} opacity={0.3} />
+                  <svg viewBox={placeholderShape.viewBox} className="w-full h-full">
+                    <path d={placeholderShape.d} fill={C.sage} opacity={0.3} />
                   </svg>
                 </motion.div>
                 <motion.div
@@ -293,8 +311,8 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                   }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
                 >
-                  <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <circle cx="55" cy="45" r="25" fill={C.sageLight} opacity={0.3} />
+                  <svg viewBox={SHAPES.bird.viewBox} className="w-full h-full">
+                    <path d={SHAPES.bird.d} fill={C.sageLight} opacity={0.3} />
                   </svg>
                 </motion.div>
               </div>

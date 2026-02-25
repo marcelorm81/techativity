@@ -1,34 +1,44 @@
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
-import OrganicBlob from '../common/OrganicBlob';
+import MorphingShape from '../common/MorphingShape';
+import { SLIDE_SHAPES } from '../../lib/organic-shapes';
 import type { StatementSlide as StatementSlideData } from '../../data/slides-data';
 
 export default function StatementSlide({ slide }: { slide: StatementSlideData }) {
-  const blobPaths = DECORATIVE_BLOBS.statement(900, 600);
+  const [shape1, shape2] = SLIDE_SHAPES.statement;
 
   return (
     <div className="absolute inset-0 flex flex-col justify-center pl-[7%] pr-[7%]">
-      {/* Decorative blobs */}
-      {blobPaths.map((path, i) => (
-        <OrganicBlob
-          key={i}
-          path={path}
-          fill={i === 0 ? C.sageLight : C.sage}
-          opacity={i === 0 ? 0.35 : 0.25}
-          viewBox={{ width: 900, height: 600 }}
-          animate
-          floatAmp={3}
-          floatDuration={10 + i * 3}
-          phase={i * 0.3}
-          style={{
-            left: i === 0 ? '10%' : '20%',
-            top: i === 0 ? '-8%' : '5%',
-            width: '85%',
-            height: '95%',
-          }}
-        />
-      ))}
+      {/* Decorative organic shapes */}
+      <MorphingShape
+        shapes={[shape1, shape2]}
+        fill={C.sageLight}
+        opacity={0.35}
+        morphDuration={12}
+        floatAmp={3}
+        floatDuration={10}
+        style={{
+          left: '10%',
+          top: '-8%',
+          width: '85%',
+          height: '95%',
+        }}
+      />
+      <MorphingShape
+        shapes={[shape2, shape1]}
+        fill={C.sage}
+        opacity={0.25}
+        morphDuration={14}
+        floatAmp={3}
+        floatDuration={13}
+        phase={0.3}
+        style={{
+          left: '20%',
+          top: '5%',
+          width: '85%',
+          height: '95%',
+        }}
+      />
 
       {/* Heading */}
       <motion.h1

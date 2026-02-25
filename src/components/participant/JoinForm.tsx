@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { blobPath } from '../../lib/blob-generator';
+import { SHAPES } from '../../lib/organic-shapes';
 import TechativityLogo from '../TechativityLogo';
 
 interface JoinFormProps {
@@ -10,10 +10,6 @@ interface JoinFormProps {
   error?: string | null;
   showSessionCode?: boolean;
 }
-
-// Decorative background blob paths
-const bgBlob1 = blobPath(50, 50, 42, { seed: 201, points: 9, wobble: 0.3 });
-const bgBlob2 = blobPath(50, 50, 35, { seed: 202, points: 7, wobble: 0.25 });
 
 const inputStyle = {
   backgroundColor: C.warmWhite,
@@ -61,15 +57,15 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
       className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
       style={{ backgroundColor: C.cream }}
     >
-      {/* Decorative blobs */}
+      {/* Decorative organic shapes */}
       <motion.div
         className="absolute pointer-events-none"
         style={{ top: '-8%', right: '-12%', width: '55%', opacity: 0.12 }}
         animate={{ y: [0, -6, 0], rotate: [0, 2, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <svg viewBox="0 0 100 100">
-          <path d={bgBlob1} fill={C.sage} />
+        <svg viewBox={SHAPES.bird.viewBox} preserveAspectRatio="xMidYMid meet">
+          <path d={SHAPES.bird.d} fill={C.sage} />
         </svg>
       </motion.div>
       <motion.div
@@ -78,8 +74,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
         animate={{ y: [0, 4, 0], rotate: [0, -1.5, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       >
-        <svg viewBox="0 0 100 100">
-          <path d={bgBlob2} fill={C.sageLight} />
+        <svg viewBox={SHAPES.sun.viewBox} preserveAspectRatio="xMidYMid meet">
+          <path d={SHAPES.sun.d} fill={C.sageLight} />
         </svg>
       </motion.div>
 

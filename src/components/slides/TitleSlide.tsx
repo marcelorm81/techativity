@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
-import OrganicBlob from '../common/OrganicBlob';
+import MorphingShape from '../common/MorphingShape';
+import { SLIDE_SHAPES, SHAPES } from '../../lib/organic-shapes';
 import { Pill } from './SlideContainer';
 import type { TitleSlide as TitleSlideData } from '../../data/slides-data';
 import type { SessionInfo } from './SlideRenderer';
@@ -13,8 +13,6 @@ interface TitleSlideProps {
 }
 
 export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
-  const blobPath = DECORATIVE_BLOBS.title(600, 900);
-
   return (
     <div className="absolute inset-0 flex">
       {/* Left content */}
@@ -74,12 +72,11 @@ export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
         </motion.p>
       </div>
 
-      {/* Right blob */}
-      <OrganicBlob
-        path={blobPath}
+      {/* Right organic shape — morphs man → sun → bird */}
+      <MorphingShape
+        shapes={[SLIDE_SHAPES.title, SHAPES.sun, SHAPES.bird]}
         fill={C.sage}
-        viewBox={{ width: 600, height: 900 }}
-        animate
+        morphDuration={10}
         floatAmp={5}
         floatDuration={8}
         style={{

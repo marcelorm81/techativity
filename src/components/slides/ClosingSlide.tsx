@@ -1,35 +1,46 @@
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
-import OrganicBlob from '../common/OrganicBlob';
+import MorphingShape from '../common/MorphingShape';
+import { SLIDE_SHAPES, SHAPES } from '../../lib/organic-shapes';
 import type { ClosingSlide as ClosingSlideData } from '../../data/slides-data';
 
 export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
-  const blobPaths = DECORATIVE_BLOBS.closing(600, 800);
+  const [shape1, shape2] = SLIDE_SHAPES.closing;
 
   return (
     <div className="absolute inset-0 flex">
-      {/* Left: blob + thank you */}
+      {/* Left: organic shapes + thank you */}
       <div className="relative w-[45%] h-full overflow-hidden">
-        {blobPaths.map((path, i) => (
-          <OrganicBlob
-            key={i}
-            path={path}
-            fill={i === 0 ? C.sage : C.sageDark}
-            opacity={i === 0 ? 1 : 0.4}
-            viewBox={{ width: 600, height: 800 }}
-            animate
-            floatAmp={4}
-            floatDuration={9 + i * 3}
-            phase={i * 0.4}
-            style={{
-              left: '-8%',
-              top: '-5%',
-              width: '110%',
-              height: '110%',
-            }}
-          />
-        ))}
+        {/* Primary shape — morphs man → bird */}
+        <MorphingShape
+          shapes={[shape1, SHAPES.bird]}
+          fill={C.sage}
+          morphDuration={12}
+          floatAmp={4}
+          floatDuration={9}
+          style={{
+            left: '-8%',
+            top: '-5%',
+            width: '110%',
+            height: '110%',
+          }}
+        />
+        {/* Secondary shape — morphs sun → mountain */}
+        <MorphingShape
+          shapes={[shape2, SHAPES.mountain]}
+          fill={C.sageDark}
+          opacity={0.4}
+          morphDuration={14}
+          floatAmp={4}
+          floatDuration={12}
+          phase={0.4}
+          style={{
+            left: '-8%',
+            top: '-5%',
+            width: '110%',
+            height: '110%',
+          }}
+        />
 
         <div className="absolute inset-0 flex flex-col justify-center pl-[15%]">
           <motion.h1

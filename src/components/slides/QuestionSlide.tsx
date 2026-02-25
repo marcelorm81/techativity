@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
-import OrganicBlob from '../common/OrganicBlob';
-import { ContentCard } from './SlideContainer';
+import { StaticOrganicShape } from '../common/MorphingShape';
+import { SLIDE_SHAPES } from '../../lib/organic-shapes';
 import type { QuestionSlide as QuestionSlideData } from '../../data/slides-data';
 
 export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
   const qNum = slide.question ? slide.question.substring(0, 2) : '';
-  const pebblePath = DECORATIVE_BLOBS.pebble(60, 60, 45);
 
   return (
     <div className="absolute inset-0 flex items-center justify-center p-[4%]">
@@ -73,20 +71,18 @@ export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
           )}
         </div>
 
-        {/* Pebble accent */}
-        <OrganicBlob
-          path={pebblePath}
+        {/* Mountain accent */}
+        <StaticOrganicShape
+          shape={SLIDE_SHAPES.question}
           fill={C.sage}
-          viewBox={{ width: 120, height: 120 }}
-          animate
+          opacity={0.2}
           floatAmp={2}
           floatDuration={5}
           style={{
-            position: 'absolute',
-            top: '8%',
-            right: '5%',
-            width: '5%',
-            height: '10%',
+            top: '5%',
+            right: '3%',
+            width: '12%',
+            height: '18%',
           }}
         />
 

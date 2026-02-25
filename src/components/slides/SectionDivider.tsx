@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
-import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
-import OrganicBlob from '../common/OrganicBlob';
+import MorphingShape from '../common/MorphingShape';
+import { SLIDE_SHAPES, SHAPES } from '../../lib/organic-shapes';
 import { Pill, SectionNumber } from './SlideContainer';
 import type { SectionSlide } from '../../data/slides-data';
 
 export default function SectionDivider({ slide }: { slide: SectionSlide }) {
-  const blobPath = DECORATIVE_BLOBS.darkAccent(400, 500);
-
   return (
     <div className="absolute inset-0 flex flex-col justify-center pl-[7%] pr-[7%]">
       {/* Pill */}
@@ -63,13 +61,12 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
         {slide.body}
       </motion.p>
 
-      {/* Decorative blob */}
-      <OrganicBlob
-        path={blobPath}
+      {/* Decorative organic shape — morphs phone → mountain */}
+      <MorphingShape
+        shapes={[SLIDE_SHAPES.section, SHAPES.mountain]}
         fill={C.sage}
         opacity={0.12}
-        viewBox={{ width: 400, height: 500 }}
-        animate
+        morphDuration={12}
         floatAmp={3}
         floatDuration={10}
         style={{
