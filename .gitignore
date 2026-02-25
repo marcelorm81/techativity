@@ -11,6 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
+.env.local
+.env.md
+.vercel/
+package-lock.json
+*-firebase-adminsdk-*.json
 
 # Editor directories and files
 .vscode/*

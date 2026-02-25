@@ -15,13 +15,13 @@ import {
 // ─── Firebase config ────────────────────────────────────────────────
 // Replace with your Firebase project config
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyDEMO_KEY_REPLACE_ME',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'techativity-live.firebaseapp.com',
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'https://techativity-live-default-rtdb.firebaseio.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'techativity-live',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'techativity-live.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '000000000000',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:000000000000:web:abcdef123456',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'techativity-3d291.firebaseapp.com',
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL || 'https://techativity-3d291-default-rtdb.europe-west1.firebasedatabase.app',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'techativity-3d291',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'techativity-3d291.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
 };
 
 const app = initializeApp(firebaseConfig);
