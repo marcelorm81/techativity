@@ -1,28 +1,57 @@
-// JoinForm.tsx — Participant name entry screen
+// JoinForm.tsx — Participant name + role entry screen (+ optional session code)
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
 import { blobPath } from '../../lib/blob-generator';
 
 interface JoinFormProps {
-  onJoin: (name: string) => void;
+  onJoin: (name: string, role: string, sessionCode?: string) => void;
   error?: string | null;
+  showSessionCode?: boolean;
 }
 
 // Decorative background blob paths
 const bgBlob1 = blobPath(50, 50, 42, { seed: 201, points: 9, wobble: 0.3 });
 const bgBlob2 = blobPath(50, 50, 35, { seed: 202, points: 7, wobble: 0.25 });
 
-export default function JoinForm({ onJoin, error }: JoinFormProps) {
+const inputStyle = {
+  backgroundColor: C.warmWhite,
+  border: `1.5px solid ${C.sageLight}`,
+  fontFamily: "'Calibri', sans-serif",
+  fontSize: '1rem',
+  color: C.darkText,
+};
+
+function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
+  e.target.style.borderColor = C.sage;
+  e.target.style.boxShadow = `0 0 0 3px ${C.sagePale}`;
+}
+
+function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
+  e.target.style.borderColor = C.sageLight;
+  e.target.style.boxShadow = 'none';
+}
+
+export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormProps) {
   const [name, setName] = useState('');
+  const [role, setRole] = useState('');
+  const [sessionCode, setSessionCode] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const canSubmit =
+    name.trim() &&
+    role.trim() &&
+    (!showSessionCode || sessionCode.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed || submitting) return;
+    if (!canSubmit || submitting) return;
     setSubmitting(true);
-    await onJoin(trimmed);
+    await onJoin(
+      name.trim(),
+      role.trim(),
+      showSessionCode ? sessionCode.trim() : undefined
+    );
     setSubmitting(false);
   };
 
@@ -103,6 +132,40 @@ export default function JoinForm({ onJoin, error }: JoinFormProps) {
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
+          {showSessionCode && (
+            <div className="mb-4">
+              <label
+                style={{
+                  fontFamily: "'Calibri', sans-serif",
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  color: C.darkText,
+                  display: 'block',
+                  marginBottom: '0.4rem',
+                }}
+              >
+                Session code
+              </label>
+              <input
+                type="text"
+                value={sessionCode}
+                onChange={(e) => setSessionCode(e.target.value.toUpperCase())}
+                placeholder="e.g. ABC123"
+                maxLength={8}
+                autoFocus
+                className="w-full px-4 py-3 rounded-xl outline-none transition-shadow tracking-widest text-center font-semibold"
+                style={{
+                  ...inputStyle,
+                  fontFamily: "'Consolas', monospace",
+                  fontSize: '1.2rem',
+                  letterSpacing: '0.2em',
+                }}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+            </div>
+          )}
+
           <div className="mb-4">
             <label
               style={{
@@ -122,23 +185,37 @@ export default function JoinForm({ onJoin, error }: JoinFormProps) {
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
               maxLength={30}
-              autoFocus
+              autoFocus={!showSessionCode}
               className="w-full px-4 py-3 rounded-xl outline-none transition-shadow"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
               style={{
-                backgroundColor: C.warmWhite,
-                border: `1.5px solid ${C.sageLight}`,
                 fontFamily: "'Calibri', sans-serif",
-                fontSize: '1rem',
+                fontSize: '0.75rem',
+                fontWeight: 600,
                 color: C.darkText,
+                display: 'block',
+                marginBottom: '0.4rem',
               }}
-              onFocus={(e) => {
-                e.target.style.borderColor = C.sage;
-                e.target.style.boxShadow = `0 0 0 3px ${C.sagePale}`;
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = C.sageLight;
-                e.target.style.boxShadow = 'none';
-              }}
+            >
+              Your role
+            </label>
+            <input
+              type="text"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              placeholder="e.g. Developer, Designer, PM…"
+              maxLength={40}
+              className="w-full px-4 py-3 rounded-xl outline-none transition-shadow"
+              style={inputStyle}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
           </div>
 
@@ -159,18 +236,18 @@ export default function JoinForm({ onJoin, error }: JoinFormProps) {
 
           <motion.button
             type="submit"
-            disabled={!name.trim() || submitting}
+            disabled={!canSubmit || submitting}
             className="w-full py-3.5 rounded-xl font-semibold transition-all"
             style={{
-              backgroundColor: name.trim() ? C.sage : C.sageLight,
-              color: name.trim() ? C.white : C.warmGray,
+              backgroundColor: canSubmit ? C.sage : C.sageLight,
+              color: canSubmit ? C.white : C.warmGray,
               fontFamily: "'Calibri', sans-serif",
               fontSize: '1rem',
               border: 'none',
-              cursor: name.trim() ? 'pointer' : 'default',
+              cursor: canSubmit ? 'pointer' : 'default',
               opacity: submitting ? 0.7 : 1,
             }}
-            whileTap={name.trim() ? { scale: 0.97 } : undefined}
+            whileTap={canSubmit ? { scale: 0.97 } : undefined}
           >
             {submitting ? 'Joining…' : 'Join'}
           </motion.button>

@@ -1,5 +1,5 @@
 // useParticipantSession.ts — Participant joins and submits answers
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   joinSession,
   submitAnswer,
@@ -21,6 +21,7 @@ export function useParticipantSession(sessionId: string | null) {
   const [state, setState] = useState<ParticipantState>('joining');
   const [participantId, setParticipantId] = useState<string | null>(null);
   const [participantName, setParticipantName] = useState('');
+  const [participantRole, setParticipantRole] = useState('');
   const [activeQuestion, setActiveQuestion] = useState<
     'none' | 'q1' | 'q2' | 'q3'
   >('none');
@@ -29,13 +30,20 @@ export function useParticipantSession(sessionId: string | null) {
   );
   const [error, setError] = useState<string | null>(null);
 
+  // Track the effective session ID (may come from prop or from join call)
+  const effectiveSessionRef = useRef<string | null>(sessionId);
+  effectiveSessionRef.current = sessionId;
+
   // Subscribe to session metadata (what question is active)
   useEffect(() => {
     if (!sessionId) return;
     return subscribeToMetadata(sessionId, (meta) => {
       if (!meta) {
-        setError('Session not found');
-        setState('error');
+        // Only show error if we've already joined (not during initial load with no session)
+        if (participantId) {
+          setError('Session not found');
+          setState('error');
+        }
         return;
       }
       setActiveQuestion(meta.activeQuestion);
@@ -44,7 +52,7 @@ export function useParticipantSession(sessionId: string | null) {
         setState('complete');
       }
     });
-  }, [sessionId]);
+  }, [sessionId, participantId]);
 
   // Update state based on active question changes
   useEffect(() => {
@@ -63,35 +71,38 @@ export function useParticipantSession(sessionId: string | null) {
     }
   }, [activeQuestion, participantId, answeredQuestions]);
 
-  // Join the session
+  // Join the session — accepts optional overrideSessionId for manual code entry
   const join = useCallback(
-    async (name: string) => {
-      if (!sessionId) return;
+    async (name: string, role: string, overrideSessionId?: string) => {
+      const sid = overrideSessionId || effectiveSessionRef.current;
+      if (!sid) return;
       try {
-        const exists = await sessionExists(sessionId);
+        const exists = await sessionExists(sid);
         if (!exists) {
           setError('Session does not exist');
           setState('error');
           return;
         }
-        const pid = await joinSession(sessionId, name);
+        const pid = await joinSession(sid, name, role);
         setParticipantId(pid);
         setParticipantName(name);
+        setParticipantRole(role);
         setState('waiting');
       } catch (e) {
         setError('Failed to join session');
         setState('error');
       }
     },
-    [sessionId]
+    []
   );
 
   // Submit an answer
   const submit = useCallback(
     async (text: string) => {
-      if (!sessionId || !participantId || activeQuestion === 'none') return;
+      const sid = effectiveSessionRef.current;
+      if (!sid || !participantId || activeQuestion === 'none') return;
       try {
-        await submitAnswer(sessionId, activeQuestion, participantId, {
+        await submitAnswer(sid, activeQuestion, participantId, {
           name: participantName,
           text,
           seed: hashToSeed(participantName),
@@ -102,13 +113,14 @@ export function useParticipantSession(sessionId: string | null) {
         setError('Failed to submit answer');
       }
     },
-    [sessionId, participantId, activeQuestion, participantName]
+    [participantId, activeQuestion, participantName]
   );
 
   return {
     state,
     participantId,
     participantName,
+    participantRole,
     activeQuestion,
     answeredQuestions,
     error,

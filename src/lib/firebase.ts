@@ -80,17 +80,20 @@ export function subscribeToMetadata(
 
 export interface Participant {
   name: string;
+  role: string;
   joinedAt: unknown;
 }
 
 export async function joinSession(
   sessionId: string,
-  name: string
+  name: string,
+  role: string
 ): Promise<string> {
   const participantsRef = ref(db, paths.participants(sessionId));
   const newRef = push(participantsRef);
   await set(newRef, {
     name,
+    role,
     joinedAt: serverTimestamp(),
   });
   return newRef.key!;

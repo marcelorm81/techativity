@@ -12,18 +12,18 @@ interface AnswerFormProps {
 const QUESTION_TEXT: Record<string, { label: string; prompt: string; placeholder: string }> = {
   q1: {
     label: 'Q1 — Identity',
-    prompt: 'What makes you, you?',
-    placeholder: 'Share what defines you…',
+    prompt: 'If you had to explain your job to a child, what would you say you do?',
+    placeholder: 'Explain it simply…',
   },
   q2: {
     label: 'Q2 — Reality',
-    prompt: 'What assumption about reality would you challenge?',
-    placeholder: "A belief you'd question\u2026",
+    prompt: 'What do you actually spend most of your time doing in a normal week?',
+    placeholder: 'Be honest about your week…',
   },
   q3: {
     label: 'Q3 — Meaning',
-    prompt: 'What gives your work meaning?',
-    placeholder: 'What drives your work…',
+    prompt: "At the end of a really good week, what makes you feel 'that was good work'?",
+    placeholder: 'What makes it worth it…',
   },
 };
 

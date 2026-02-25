@@ -10,7 +10,7 @@ import { C } from '../lib/design-system';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ParticipantPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const sessionId = searchParams.get('session');
 
   const {
@@ -22,38 +22,14 @@ export default function ParticipantPage() {
     submit,
   } = useParticipantSession(sessionId);
 
-  // No session ID in URL
-  if (!sessionId) {
-    return (
-      <div
-        className="min-h-screen flex flex-col items-center justify-center p-6"
-        style={{ backgroundColor: C.cream }}
-      >
-        <h1
-          style={{
-            fontFamily: "'Georgia', serif",
-            fontSize: '1.3rem',
-            fontWeight: 'bold',
-            color: C.darkText,
-            textAlign: 'center',
-          }}
-        >
-          No session found
-        </h1>
-        <p
-          className="mt-3"
-          style={{
-            fontFamily: "'Calibri', sans-serif",
-            fontSize: '0.85rem',
-            color: C.midGray,
-            textAlign: 'center',
-          }}
-        >
-          Scan the QR code on the presenter's screen to join.
-        </p>
-      </div>
-    );
-  }
+  const handleJoin = async (name: string, role: string, sessionCode?: string) => {
+    const sid = sessionCode?.toUpperCase() || undefined;
+    // If a manual code was entered, update the URL so subscriptions pick it up
+    if (sid) {
+      setSearchParams({ session: sid });
+    }
+    await join(name, role, sid);
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -65,7 +41,11 @@ export default function ParticipantPage() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <JoinForm onJoin={join} error={error} />
+          <JoinForm
+            onJoin={handleJoin}
+            error={error}
+            showSessionCode={!sessionId}
+          />
         </motion.div>
       )}
 
