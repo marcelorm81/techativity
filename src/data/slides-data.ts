@@ -110,7 +110,7 @@ export const SLIDES: Slide[] = [
   {
     id: 0,
     type: "title",
-    bgMode: "cream",
+    bgMode: "dark",
     pill: "Techativity",
     heading: "The Why\nBehind\nthe Work.",
     subheading: "The Why\nBehind\nthe Work.",

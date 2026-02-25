@@ -1,4 +1,4 @@
-// AnswersSlide.tsx — Live answer visualization with organic shape garden
+// AnswersSlide.tsx — Live answer visualization with organic shape garden + 5-min countdown
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { C, F } from '../../lib/design-system';
@@ -29,6 +29,34 @@ function getFillForAnswer(theme: QuestionTheme, seed: number): string {
 function getShapeForAnswer(theme: QuestionTheme, seed: number): OrganicShape {
   const shapes = ANSWER_SHAPES[theme] || [SHAPES.cloud, SHAPES.sunBlob];
   return shapes[seed % shapes.length];
+}
+
+// ─── Countdown hook ──────────────────────────────────────────────────
+
+function useCountdown(durationSeconds: number) {
+  const [remaining, setRemaining] = useState(durationSeconds);
+  const startRef = useRef<number>(Date.now());
+
+  useEffect(() => {
+    startRef.current = Date.now();
+    setRemaining(durationSeconds);
+
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startRef.current) / 1000);
+      const left = Math.max(0, durationSeconds - elapsed);
+      setRemaining(left);
+      if (left <= 0) clearInterval(interval);
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [durationSeconds]);
+
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
+  const formatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const progress = 1 - remaining / durationSeconds;
+
+  return { remaining, formatted, progress };
 }
 
 // ─── Individual answer blob ──────────────────────────────────────────
@@ -80,7 +108,7 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
     // Truncate last line if needed
     if (result.length > 0 && result.length === maxLines && answer.text.length > result.join(' ').length) {
       const last = result[result.length - 1];
-      result[result.length - 1] = last.slice(0, -1) + '…';
+      result[result.length - 1] = last.slice(0, -1) + '\u2026';
     }
     return result;
   }, [answer.text, maxCharsPerLine, maxLines]);
@@ -180,9 +208,12 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
 
 // ─── Main AnswersSlide ───────────────────────────────────────────────
 
+const COUNTDOWN_SECONDS = 5 * 60; // 5 minutes
+
 export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 960, height: 480 });
+  const { remaining, formatted, progress } = useCountdown(COUNTDOWN_SECONDS);
 
   // Measure container
   useEffect(() => {
@@ -209,19 +240,22 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
   });
 
   const themeLabels: Record<QuestionTheme, string> = {
-    identity: 'Q1 — Identity',
-    reality: 'Q2 — Reality',
-    meaning: 'Q3 — Meaning',
+    identity: 'Q1 \u2014 Identity',
+    reality: 'Q2 \u2014 Reality',
+    meaning: 'Q3 \u2014 Meaning',
   };
 
   const themeQuestions: Record<QuestionTheme, string> = {
-    identity: '"If you had to explain your job to a child, what would you say you do?"',
-    reality: '"What do you actually spend most of your time doing in a normal week?"',
-    meaning: '"At the end of a really good week, what makes you feel \'that was good work\'?"',
+    identity: '\u201CIf you had to explain your job to a child, what would you say you do?\u201D',
+    reality: '\u201CWhat do you actually spend most of your time doing in a normal week?\u201D',
+    meaning: '\u201CAt the end of a really good week, what makes you feel \u2018that was good work\u2019?\u201D',
   };
 
   // Waiting placeholder shapes
   const placeholderShape = SHAPES.cloud;
+
+  // Timer urgency color
+  const timerColor = remaining <= 30 ? '#c44' : remaining <= 60 ? '#c90' : C.olive;
 
   return (
     <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: C.cream }}>
@@ -257,21 +291,60 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
             {themeLabels[slide.theme]}
           </motion.h2>
         </div>
-        <motion.p
-          style={{
-            fontFamily: F.title,
-            fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
-            fontStyle: 'italic',
-            color: C.olive,
-            opacity: 0.5,
-            marginBottom: '0.25rem',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ delay: 0.2 }}
-        >
-          {themeQuestions[slide.theme]}
-        </motion.p>
+
+        {/* Right side: question + countdown timer */}
+        <div className="flex items-end gap-6">
+          <motion.p
+            style={{
+              fontFamily: F.title,
+              fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
+              fontStyle: 'italic',
+              color: C.olive,
+              opacity: 0.5,
+              marginBottom: '0.25rem',
+              maxWidth: '40vw',
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ delay: 0.2 }}
+          >
+            {themeQuestions[slide.theme]}
+          </motion.p>
+
+          {/* Countdown timer */}
+          <motion.div
+            className="flex flex-col items-center shrink-0"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            <motion.span
+              style={{
+                fontFamily: F.title,
+                fontSize: 'clamp(1.6rem, 2.5vw, 2.2rem)',
+                fontWeight: 400,
+                color: timerColor,
+                lineHeight: 1,
+                fontVariantNumeric: 'tabular-nums',
+              }}
+              animate={remaining <= 30 ? { opacity: [1, 0.4, 1] } : {}}
+              transition={remaining <= 30 ? { duration: 1, repeat: Infinity, ease: 'easeInOut' } : {}}
+            >
+              {formatted}
+            </motion.span>
+            <span
+              style={{
+                fontFamily: F.body,
+                fontSize: 'clamp(0.55rem, 0.7vw, 0.65rem)',
+                color: C.olive,
+                opacity: 0.4,
+                marginTop: '0.15em',
+              }}
+            >
+              remaining
+            </span>
+          </motion.div>
+        </div>
       </div>
 
       {/* Shape garden area */}
@@ -326,7 +399,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                   opacity: 0.4,
                 }}
               >
-                Waiting for answers…
+                Waiting for answers\u2026
               </motion.p>
             </motion.div>
           ) : (
@@ -351,8 +424,9 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
         </AnimatePresence>
       </div>
 
-      {/* Answer count bar */}
+      {/* Bottom bar: progress + count + timer progress */}
       <div className="px-[7%] pb-[2.5%] flex items-center gap-3">
+        {/* Answer count progress bar */}
         <div
           className="h-1.5 rounded-full flex-1"
           style={{ backgroundColor: C.creamDark }}
@@ -375,6 +449,19 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
         >
           {answers.length} / 18
         </span>
+
+        {/* Timer progress bar */}
+        <div
+          className="h-1.5 rounded-full"
+          style={{ backgroundColor: C.creamDark, width: '20%' }}
+        >
+          <motion.div
+            className="h-full rounded-full"
+            style={{ backgroundColor: timerColor }}
+            animate={{ width: `${(1 - progress) * 100}%` }}
+            transition={{ duration: 0.5, ease: 'linear' }}
+          />
+        </div>
       </div>
     </div>
   );

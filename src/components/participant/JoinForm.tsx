@@ -1,8 +1,9 @@
-// JoinForm.tsx — Participant name + role entry screen (+ optional session code)
+// JoinForm.tsx — Participant name + role entry screen (olive bg, white text, pill buttons)
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { C, F } from '../../lib/design-system';
 import { SHAPES } from '../../lib/organic-shapes';
+import { StaticOrganicShape } from '../common/MorphingShape';
 import TechativityLogo from '../TechativityLogo';
 
 interface JoinFormProps {
@@ -11,21 +12,22 @@ interface JoinFormProps {
   showSessionCode?: boolean;
 }
 
-const inputStyle = {
-  backgroundColor: C.white,
-  border: `1.5px solid ${C.creamDark}`,
-  fontFamily: F.body,
+const inputStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(255,255,255,0.1)',
+  border: '1.5px solid rgba(255,255,255,0.25)',
+  fontFamily: "'Gambarino', 'Georgia', serif",
   fontSize: '1rem',
-  color: C.olive,
+  color: C.white,
+  borderRadius: '9999px',
 };
 
 function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
-  e.target.style.borderColor = C.olive;
-  e.target.style.boxShadow = `0 0 0 3px ${C.creamDark}`;
+  e.target.style.borderColor = 'rgba(255,255,255,0.6)';
+  e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.1)';
 }
 
 function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-  e.target.style.borderColor = C.creamDark;
+  e.target.style.borderColor = 'rgba(255,255,255,0.25)';
   e.target.style.boxShadow = 'none';
 }
 
@@ -55,29 +57,17 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
-      style={{ backgroundColor: C.cream }}
+      style={{ backgroundColor: C.olive }}
     >
-      {/* Decorative organic shapes */}
-      <motion.div
-        className="absolute pointer-events-none"
-        style={{ top: '-8%', right: '-12%', width: '55%', opacity: 0.08 }}
-        animate={{ y: [0, -6, 0], rotate: [0, 2, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <svg viewBox={SHAPES.bird.viewBox} preserveAspectRatio="xMidYMid meet">
-          <path d={SHAPES.bird.d} fill={C.olive} />
-        </svg>
-      </motion.div>
-      <motion.div
-        className="absolute pointer-events-none"
-        style={{ bottom: '-5%', left: '-10%', width: '40%', opacity: 0.06 }}
-        animate={{ y: [0, 4, 0], rotate: [0, -1.5, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-      >
-        <svg viewBox={SHAPES.sun.viewBox} preserveAspectRatio="xMidYMid meet">
-          <path d={SHAPES.sun.d} fill={C.oliveLight} />
-        </svg>
-      </motion.div>
+      {/* Background organic shapes — subtle, low opacity */}
+      <StaticOrganicShape shape={SHAPES.cloud} fill={C.white} opacity={0.04} floatAmp={6} floatDuration={12}
+        style={{ right: '-10%', top: '-8%', width: '45%', height: '40%' }} />
+      <StaticOrganicShape shape={SHAPES.sunBlob} fill={C.white} opacity={0.035} floatAmp={5} floatDuration={14} phase={0.3}
+        style={{ left: '-8%', bottom: '-5%', width: '35%', height: '35%' }} />
+      <StaticOrganicShape shape={SHAPES.bird} fill={C.white} opacity={0.03} floatAmp={4} floatDuration={11} phase={0.6}
+        style={{ left: '-5%', top: '-10%', width: '28%', height: '30%' }} />
+      <StaticOrganicShape shape={SHAPES.mountain} fill={C.white} opacity={0.03} floatAmp={3} floatDuration={13} phase={0.8}
+        style={{ right: '-4%', bottom: '-8%', width: '25%', height: '25%' }} />
 
       {/* Content */}
       <motion.div
@@ -89,18 +79,19 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
         {/* Logo / title */}
         <div className="flex flex-col items-center mb-8">
           <TechativityLogo
-            color={C.olive}
+            color={C.white}
             width="260px"
             className="mb-3"
           />
           <motion.div
             className="inline-block px-4 py-1.5 rounded-full"
             style={{
-              backgroundColor: C.creamDark,
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.2)',
               fontFamily: F.body,
               fontSize: '0.7rem',
               letterSpacing: '0.08em',
-              color: C.olive,
+              color: C.white,
             }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -113,8 +104,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
             style={{
               fontFamily: F.body,
               fontSize: '0.9rem',
-              color: C.olive,
-              opacity: 0.6,
+              color: C.white,
+              opacity: 0.5,
             }}
           >
             Join the conversation
@@ -129,7 +120,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
                 style={{
                   fontFamily: F.body,
                   fontSize: '0.8rem',
-                  color: C.olive,
+                  color: C.white,
+                  opacity: 0.6,
                   display: 'block',
                   marginBottom: '0.4rem',
                 }}
@@ -143,7 +135,7 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
                 placeholder="e.g. ABC123"
                 maxLength={8}
                 autoFocus
-                className="w-full px-4 py-3 rounded-xl outline-none transition-shadow tracking-widest text-center font-semibold"
+                className="w-full px-5 py-3 outline-none transition-shadow tracking-widest text-center font-semibold"
                 style={{
                   ...inputStyle,
                   fontSize: '1.2rem',
@@ -160,7 +152,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
               style={{
                 fontFamily: F.body,
                 fontSize: '0.8rem',
-                color: C.olive,
+                color: C.white,
+                opacity: 0.6,
                 display: 'block',
                 marginBottom: '0.4rem',
               }}
@@ -174,7 +167,7 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
               placeholder="Enter your name"
               maxLength={30}
               autoFocus={!showSessionCode}
-              className="w-full px-4 py-3 rounded-xl outline-none transition-shadow"
+              className="w-full px-5 py-3 outline-none transition-shadow"
               style={inputStyle}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -186,7 +179,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
               style={{
                 fontFamily: F.body,
                 fontSize: '0.8rem',
-                color: C.olive,
+                color: C.white,
+                opacity: 0.6,
                 display: 'block',
                 marginBottom: '0.4rem',
               }}
@@ -197,9 +191,9 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
               type="text"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              placeholder="e.g. Developer, Designer, PM…"
+              placeholder="e.g. Developer, Designer, PM\u2026"
               maxLength={40}
-              className="w-full px-4 py-3 rounded-xl outline-none transition-shadow"
+              className="w-full px-5 py-3 outline-none transition-shadow"
               style={inputStyle}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -212,7 +206,7 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
               style={{
                 fontFamily: F.body,
                 fontSize: '0.85rem',
-                color: '#c44',
+                color: '#ff9999',
               }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -224,19 +218,22 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
           <motion.button
             type="submit"
             disabled={!canSubmit || submitting}
-            className="w-full py-3.5 rounded-xl transition-all"
+            className="w-full py-3.5 rounded-full transition-all"
             style={{
-              backgroundColor: canSubmit ? C.olive : C.creamDark,
-              color: canSubmit ? C.white : C.lightGray,
+              backgroundColor: canSubmit ? 'transparent' : 'transparent',
+              color: canSubmit ? C.white : 'rgba(255,255,255,0.3)',
               fontFamily: F.body,
               fontSize: '1.05rem',
-              border: 'none',
+              border: canSubmit
+                ? '1.5px solid rgba(255,255,255,0.5)'
+                : '1.5px solid rgba(255,255,255,0.15)',
               cursor: canSubmit ? 'pointer' : 'default',
               opacity: submitting ? 0.7 : 1,
             }}
+            whileHover={canSubmit ? { scale: 1.03, borderColor: 'rgba(255,255,255,0.8)' } : undefined}
             whileTap={canSubmit ? { scale: 0.97 } : undefined}
           >
-            {submitting ? 'Joining…' : 'Join'}
+            {submitting ? 'Joining\u2026' : 'Join'}
           </motion.button>
         </form>
       </motion.div>

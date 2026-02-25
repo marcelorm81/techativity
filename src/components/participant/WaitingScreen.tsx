@@ -1,149 +1,129 @@
-// WaitingScreen.tsx — Pong mini-game while waiting for next question
+// WaitingScreen.tsx — Interactive shape generator: tap to spawn floating organic shapes
 import { useRef, useEffect, useCallback, useState } from 'react';
-import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
-import { hashToSeed } from '../../lib/blob-generator';
+import { motion, AnimatePresence } from 'framer-motion';
+import { C, F } from '../../lib/design-system';
+import { SHAPES, SHAPE_KEYS } from '../../lib/organic-shapes';
+import type { OrganicShape } from '../../lib/organic-shapes';
 
 interface WaitingScreenProps {
   name: string;
   message?: string;
 }
 
-// Generate an imperfect shape path (wobbly rectangle for paddles, wobbly circle for ball)
-function wobbleRect(
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  seed: number
-): Path2D {
-  const path = new Path2D();
-  const rng = mulberry32(seed);
-  const jitter = 2.5;
-  const j = () => (rng() - 0.5) * jitter;
+// ─── Physics shape type ──────────────────────────────────────────────
 
-  // Go around the rectangle with slight offsets at corners and midpoints
-  path.moveTo(x + j(), y + j());
-  path.quadraticCurveTo(x + w * 0.5 + j(), y + j() * 0.5, x + w + j(), y + j());
-  path.quadraticCurveTo(x + w + j() * 0.5, y + h * 0.5 + j(), x + w + j(), y + h + j());
-  path.quadraticCurveTo(x + w * 0.5 + j(), y + h + j() * 0.5, x + j(), y + h + j());
-  path.quadraticCurveTo(x + j() * 0.5, y + h * 0.5 + j(), x + j(), y + j());
-  path.closePath();
-  return path;
+interface FloatingShape {
+  id: number;
+  shape: OrganicShape;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  rotation: number;
+  rotationSpeed: number;
+  scale: number;
+  fill: string;
+  opacity: number;
 }
 
-function wobbleCircle(cx: number, cy: number, r: number, seed: number): Path2D {
-  const path = new Path2D();
-  const rng = mulberry32(seed);
-  const points = 10;
-  const wobble = 0.18;
+// ─── Color palette for spawned shapes ────────────────────────────────
 
-  for (let i = 0; i <= points; i++) {
-    const angle = (i / points) * Math.PI * 2;
-    const nextAngle = ((i + 1) / points) * Math.PI * 2;
-    const rOff = r * (1 + (rng() - 0.5) * wobble);
-    const px = cx + Math.cos(angle) * rOff;
-    const py = cy + Math.sin(angle) * rOff;
+const SHAPE_FILLS = [
+  C.white,
+  'rgba(255,255,255,0.85)',
+  'rgba(255,255,255,0.7)',
+  'rgba(255,255,255,0.9)',
+  'rgba(255,255,255,0.75)',
+  'rgba(255,255,255,0.8)',
+];
 
-    if (i === 0) {
-      path.moveTo(px, py);
-    } else {
-      // Use a control point between current and next for organic curve
-      const midAngle = (angle + nextAngle) * 0.5 - (Math.PI * 2) / points / 2;
-      const cRoff = r * (1 + (rng() - 0.5) * wobble * 1.3);
-      const cpx = cx + Math.cos(midAngle) * cRoff;
-      const cpy = cy + Math.sin(midAngle) * cRoff;
-      path.quadraticCurveTo(cpx, cpy, px, py);
-    }
-  }
-  path.closePath();
-  return path;
-}
-
-// Simple seeded PRNG
-function mulberry32(a: number) {
-  return function () {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-// Dashed center line with imperfect dashes
-function drawCenterLine(
-  ctx: CanvasRenderingContext2D,
-  w: number,
-  h: number,
-  seed: number
-) {
-  const rng = mulberry32(seed + 999);
-  ctx.save();
-  ctx.strokeStyle = C.sageLight;
-  ctx.lineWidth = 1.5;
-  ctx.globalAlpha = 0.4;
-  const dashLen = 10;
-  const gap = 8;
-  let y = 4;
-  while (y < h) {
-    const x = w / 2 + (rng() - 0.5) * 1.5;
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + (rng() - 0.5) * 1, y + dashLen + (rng() - 0.5) * 2);
-    ctx.stroke();
-    y += dashLen + gap;
-  }
-  ctx.restore();
-}
+const MAX_SHAPES = 40; // When this many shapes are on screen, reload
 
 export default function WaitingScreen({
   name,
   message = 'Waiting for the next question\u2026',
 }: WaitingScreenProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const gameRef = useRef<ReturnType<typeof createGame> | null>(null);
+  const shapesRef = useRef<FloatingShape[]>([]);
+  const nextIdRef = useRef(0);
   const animRef = useRef<number>(0);
-  const [score, setScore] = useState({ left: 0, right: 0 });
-  const nameSeed = hashToSeed(name);
+  const [shapeCount, setShapeCount] = useState(0);
+  const [reloading, setReloading] = useState(false);
 
-  const createGame = useCallback(
-    (w: number, h: number) => {
-      const paddleW = 14;
-      const paddleH = h * 0.22;
-      const ballR = 8;
-      const aiSpeed = 2.2;
+  // Draw a single shape on canvas using Path2D
+  const drawShapeOnCanvas = useCallback(
+    (ctx: CanvasRenderingContext2D, shape: FloatingShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      const s = shape.scale;
+      ctx.scale(s, s);
+      ctx.translate(-shape.shape.width / 2, -shape.shape.height / 2);
 
-      return {
-        ball: { x: w / 2, y: h / 2, vx: 2.5, vy: 1.8 },
-        left: { y: h / 2 - paddleH / 2 }, // player
-        right: { y: h / 2 - paddleH / 2 }, // AI
-        paddleW,
-        paddleH,
-        ballR,
-        aiSpeed,
-        w,
-        h,
-        shapeSeed: nameSeed,
-        paused: false,
-      };
+      const path = new Path2D(shape.shape.d);
+      ctx.fillStyle = shape.fill;
+      ctx.globalAlpha = shape.opacity;
+      if (shape.shape.fillRule === 'evenodd') {
+        ctx.fill(path, 'evenodd');
+      } else {
+        ctx.fill(path);
+      }
+      ctx.restore();
     },
-    [nameSeed]
+    []
   );
 
-  // Touch / pointer control
-  const pointerY = useRef<number | null>(null);
+  // Spawn a shape at given position
+  const spawnShape = useCallback((clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas || reloading) return;
 
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    pointerY.current = e.clientY - rect.top;
-  }, []);
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
 
-  const handlePointerLeave = useCallback(() => {
-    pointerY.current = null;
-  }, []);
+    const shapeKey = SHAPE_KEYS[nextIdRef.current % SHAPE_KEYS.length];
+    const shape = SHAPES[shapeKey];
+    const fill = SHAPE_FILLS[nextIdRef.current % SHAPE_FILLS.length];
 
+    // Random velocity in a random direction
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 0.5 + Math.random() * 1.5;
+
+    const newShape: FloatingShape = {
+      id: nextIdRef.current++,
+      shape,
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      rotation: Math.random() * Math.PI * 2,
+      rotationSpeed: (Math.random() - 0.5) * 0.02,
+      scale: 0.08 + Math.random() * 0.12,
+      fill,
+      opacity: 0.15 + Math.random() * 0.25,
+    };
+
+    shapesRef.current.push(newShape);
+    setShapeCount(shapesRef.current.length);
+
+    // Check if full — trigger reload
+    if (shapesRef.current.length >= MAX_SHAPES) {
+      setReloading(true);
+      setTimeout(() => {
+        shapesRef.current = [];
+        setShapeCount(0);
+        setReloading(false);
+      }, 600);
+    }
+  }, [reloading]);
+
+  // Handle tap/click
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    spawnShape(e.clientX, e.clientY);
+  }, [spawnShape]);
+
+  // Physics + render loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -151,146 +131,79 @@ export default function WaitingScreen({
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const w = rect.width;
-    const h = rect.height;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.scale(dpr, dpr);
 
-    const game = createGame(w, h);
-    gameRef.current = game;
-
-    let frameSeed = game.shapeSeed;
-
-    function resetBall(direction: number) {
-      game.ball.x = game.w / 2;
-      game.ball.y = game.h / 2;
-      game.ball.vx = 2.5 * direction;
-      game.ball.vy = (Math.random() - 0.5) * 3;
-      frameSeed += 1;
+    function resize() {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function update() {
-      const { ball, left, right, paddleW, paddleH, ballR, aiSpeed } = game;
-
-      // Player paddle follows pointer
-      if (pointerY.current !== null) {
-        const target = pointerY.current - paddleH / 2;
-        left.y += (target - left.y) * 0.25;
-      } else {
-        // Auto-play when not touching (slightly imperfect)
-        const targetY = ball.y - paddleH / 2 + Math.sin(Date.now() / 400) * 8;
-        left.y += (targetY - left.y) * 0.06;
-      }
-
-      // AI paddle
-      const aiTarget = ball.y - paddleH / 2 + Math.sin(Date.now() / 500) * 12;
-      const aiDiff = aiTarget - right.y;
-      right.y += Math.sign(aiDiff) * Math.min(Math.abs(aiDiff), aiSpeed);
-
-      // Clamp paddles
-      left.y = Math.max(0, Math.min(game.h - paddleH, left.y));
-      right.y = Math.max(0, Math.min(game.h - paddleH, right.y));
-
-      // Move ball
-      ball.x += ball.vx;
-      ball.y += ball.vy;
-
-      // Top/bottom bounce
-      if (ball.y - ballR < 0) {
-        ball.y = ballR;
-        ball.vy *= -1;
-      }
-      if (ball.y + ballR > game.h) {
-        ball.y = game.h - ballR;
-        ball.vy *= -1;
-      }
-
-      // Left paddle collision
-      if (
-        ball.vx < 0 &&
-        ball.x - ballR < paddleW + 10 &&
-        ball.y > left.y &&
-        ball.y < left.y + paddleH
-      ) {
-        ball.vx = Math.abs(ball.vx) * 1.03;
-        ball.vy += ((ball.y - (left.y + paddleH / 2)) / paddleH) * 2;
-        ball.x = paddleW + 10 + ballR;
-        frameSeed += 1;
-      }
-
-      // Right paddle collision
-      if (
-        ball.vx > 0 &&
-        ball.x + ballR > game.w - paddleW - 10 &&
-        ball.y > right.y &&
-        ball.y < right.y + paddleH
-      ) {
-        ball.vx = -Math.abs(ball.vx) * 1.03;
-        ball.vy += ((ball.y - (right.y + paddleH / 2)) / paddleH) * 2;
-        ball.x = game.w - paddleW - 10 - ballR;
-        frameSeed += 1;
-      }
-
-      // Cap speed
-      const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-      if (speed > 6) {
-        ball.vx = (ball.vx / speed) * 6;
-        ball.vy = (ball.vy / speed) * 6;
-      }
-
-      // Score
-      if (ball.x < -ballR) {
-        setScore((s) => ({ ...s, right: s.right + 1 }));
-        resetBall(1);
-      }
-      if (ball.x > game.w + ballR) {
-        setScore((s) => ({ ...s, left: s.left + 1 }));
-        resetBall(-1);
-      }
-    }
-
-    function draw() {
-      if (!ctx) return;
-      const { ball, left, right, paddleW, paddleH, ballR } = game;
-
-      // Clear
-      ctx.clearRect(0, 0, game.w, game.h);
-
-      // Center line
-      drawCenterLine(ctx, game.w, game.h, game.shapeSeed);
-
-      // Left paddle (player)
-      ctx.fillStyle = C.sage;
-      ctx.globalAlpha = 0.7;
-      const leftPaddle = wobbleRect(10, left.y, paddleW, paddleH, frameSeed);
-      ctx.fill(leftPaddle);
-
-      // Right paddle (AI)
-      ctx.fillStyle = C.sageDark;
-      ctx.globalAlpha = 0.7;
-      const rightPaddle = wobbleRect(
-        game.w - paddleW - 10,
-        right.y,
-        paddleW,
-        paddleH,
-        frameSeed + 50
-      );
-      ctx.fill(rightPaddle);
-
-      // Ball
-      ctx.fillStyle = C.accentOlive;
-      ctx.globalAlpha = 0.85;
-      const ballShape = wobbleCircle(ball.x, ball.y, ballR, frameSeed + 100);
-      ctx.fill(ballShape);
-
-      ctx.globalAlpha = 1;
-    }
+    resize();
+    const resizeObs = new ResizeObserver(resize);
+    resizeObs.observe(canvas);
 
     function loop() {
-      update();
-      draw();
+      if (!canvas || !ctx) return;
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+
+      // Clear
+      ctx.clearRect(0, 0, w, h);
+
+      const shapes = shapesRef.current;
+
+      // Physics step
+      for (const s of shapes) {
+        // Move
+        s.x += s.vx;
+        s.y += s.vy;
+        s.rotation += s.rotationSpeed;
+
+        // Gentle gravity toward center
+        const cx = w / 2;
+        const cy = h / 2;
+        s.vx += (cx - s.x) * 0.0001;
+        s.vy += (cy - s.y) * 0.0001;
+
+        // Damping
+        s.vx *= 0.998;
+        s.vy *= 0.998;
+
+        // Bounce off walls
+        const margin = 20;
+        if (s.x < margin) { s.x = margin; s.vx *= -0.5; }
+        if (s.x > w - margin) { s.x = w - margin; s.vx *= -0.5; }
+        if (s.y < margin) { s.y = margin; s.vy *= -0.5; }
+        if (s.y > h - margin) { s.y = h - margin; s.vy *= -0.5; }
+      }
+
+      // Collision between shapes (simple push apart)
+      for (let i = 0; i < shapes.length; i++) {
+        for (let j = i + 1; j < shapes.length; j++) {
+          const a = shapes[i];
+          const b = shapes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const minDist = (a.scale + b.scale) * 150;
+
+          if (dist < minDist) {
+            const overlap = (minDist - dist) / dist * 0.3;
+            a.vx += dx * overlap * 0.02;
+            a.vy += dy * overlap * 0.02;
+            b.vx -= dx * overlap * 0.02;
+            b.vy -= dy * overlap * 0.02;
+          }
+        }
+      }
+
+      // Draw all shapes
+      for (const s of shapes) {
+        drawShapeOnCanvas(ctx, s);
+      }
+
       animRef.current = requestAnimationFrame(loop);
     }
 
@@ -298,27 +211,51 @@ export default function WaitingScreen({
 
     return () => {
       cancelAnimationFrame(animRef.current);
+      resizeObs.disconnect();
     };
-  }, [createGame]);
+  }, [drawShapeOnCanvas]);
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center p-4"
-      style={{ backgroundColor: C.cream }}
+      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden"
+      style={{ backgroundColor: C.olive }}
     >
+      {/* Canvas for shapes */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ touchAction: 'none', cursor: 'crosshair' }}
+        onPointerDown={handlePointerDown}
+      />
+
+      {/* Reload flash overlay */}
+      <AnimatePresence>
+        {reloading && (
+          <motion.div
+            className="absolute inset-0"
+            style={{ backgroundColor: C.olive, zIndex: 20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Content overlay */}
       <motion.div
-        className="flex flex-col items-center w-full max-w-sm"
+        className="relative flex flex-col items-center text-center pointer-events-none"
+        style={{ zIndex: 10 }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Greeting */}
         <h2
           style={{
-            fontFamily: "'Gambarino', 'Georgia', serif",
-            fontSize: '1.1rem',
-            fontWeight: 'bold',
-            color: C.darkText,
+            fontFamily: F.title,
+            fontSize: '1.4rem',
+            fontWeight: 400,
+            color: C.white,
             textAlign: 'center',
             marginBottom: '0.3rem',
           }}
@@ -326,64 +263,30 @@ export default function WaitingScreen({
           Hi, {name}
         </h2>
 
-        {/* Waiting message */}
         <motion.p
           style={{
-            fontFamily: "'Gambarino', 'Georgia', serif",
-            fontSize: '0.8rem',
-            color: C.midGray,
+            fontFamily: F.body,
+            fontSize: '0.85rem',
+            color: C.white,
             textAlign: 'center',
-            marginBottom: '1rem',
+            opacity: 0.5,
           }}
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         >
           {message}
         </motion.p>
 
-        {/* Score */}
-        <div
-          className="flex items-center gap-4 mb-2"
-          style={{
-            fontFamily: "'Gambarino', 'Georgia', serif",
-            fontSize: '1.1rem',
-            color: C.sage,
-            letterSpacing: '0.1em',
-          }}
-        >
-          <span>{score.left}</span>
-          <span style={{ color: C.lightGray, fontSize: '0.7rem' }}>:</span>
-          <span>{score.right}</span>
-        </div>
-
-        {/* Pong canvas */}
-        <div
-          className="w-full rounded-2xl overflow-hidden"
-          style={{
-            border: `1.5px solid ${C.sageLight}`,
-            backgroundColor: C.warmWhite,
-            aspectRatio: '4 / 3',
-          }}
-        >
-          <canvas
-            ref={canvasRef}
-            className="w-full h-full"
-            style={{ touchAction: 'none', cursor: 'none' }}
-            onPointerMove={handlePointerMove}
-            onPointerLeave={handlePointerLeave}
-          />
-        </div>
-
         <p
-          className="mt-2"
+          className="mt-4"
           style={{
-            fontFamily: "'Gambarino', 'Georgia', serif",
-            fontSize: '0.65rem',
-            color: C.lightGray,
-            textAlign: 'center',
+            fontFamily: F.body,
+            fontSize: '0.7rem',
+            color: C.white,
+            opacity: 0.3,
           }}
         >
-          drag to play
+          tap to create shapes {'\u00B7'} {shapeCount}/{MAX_SHAPES}
         </p>
       </motion.div>
     </div>
