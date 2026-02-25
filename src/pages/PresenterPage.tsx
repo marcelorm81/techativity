@@ -29,7 +29,6 @@ function getQuestionKeyForSlide(slideIndex: number): 'q1' | 'q2' | 'q3' | null {
 export default function PresenterPage() {
   const { currentSlide, direction, totalSlides, slide, goNext, goPrev, goTo } =
     useSlideNavigation();
-  const { answers, addTestAnswer } = useAnswerSubscription();
   const {
     sessionId,
     participantCount,
@@ -39,6 +38,7 @@ export default function PresenterPage() {
     updateSlide,
     closeSession,
   } = usePresenterSession();
+  const { answers, addTestAnswer } = useAnswerSubscription(sessionId ?? undefined);
 
   const [showSetup, setShowSetup] = useState(true);
   const [activeQ, setActiveQ] = useState<'none' | 'q1' | 'q2' | 'q3'>('none');

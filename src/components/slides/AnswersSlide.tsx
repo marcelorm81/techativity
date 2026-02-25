@@ -200,9 +200,9 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
   };
 
   const themeQuestions: Record<QuestionTheme, string> = {
-    identity: '"What makes you, you?"',
-    reality: '"What assumption about reality would you challenge?"',
-    meaning: '"What gives your work meaning?"',
+    identity: '"If you had to explain your job to a child, what would you say you do?"',
+    reality: '"What do you actually spend most of your time doing in a normal week?"',
+    meaning: '"At the end of a really good week, what makes you feel \'that was good work\'?"',
   };
 
   return (
