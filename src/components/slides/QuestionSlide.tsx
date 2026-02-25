@@ -26,18 +26,18 @@ export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
           floatDuration={7}
           style={{
             position: 'relative',
-            width: 'clamp(80px, 10vw, 140px)',
-            height: 'clamp(80px, 10vw, 140px)',
+            width: 'clamp(90px, 12vw, 160px)',
+            height: 'clamp(90px, 12vw, 160px)',
           }}
         />
       </motion.div>
 
       {/* Question text — centered, large Gambarino */}
       <motion.h2
-        className="px-[12%] text-center"
+        className="px-[10%] text-center"
         style={{
           fontFamily: F.title,
-          fontSize: 'clamp(1.8rem, 4.5vw, 3.8rem)',
+          fontSize: 'clamp(2.4rem, 5.5vw, 4.8rem)',
           fontWeight: 400,
           color: C.olive,
           lineHeight: 1.1,
@@ -56,7 +56,7 @@ export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
           className="mt-6 px-[15%] text-center"
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(0.8rem, 1.3vw, 1.1rem)',
+            fontSize: 'clamp(1.1rem, 1.7vw, 1.5rem)',
             color: C.olive,
             opacity: 0.5,
             fontStyle: 'italic',
@@ -72,7 +72,7 @@ export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
       {/* Notes strip at bottom */}
       {slide.notes && (
         <motion.div
-          className="absolute bottom-0 left-0 right-0 px-[7%] py-4"
+          className="absolute bottom-0 left-0 right-0 px-[7%] py-5"
           style={{ backgroundColor: C.creamDark }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +81,7 @@ export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
           <p
             style={{
               fontFamily: F.body,
-              fontSize: 'clamp(0.55rem, 0.8vw, 0.7rem)',
+              fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
               color: C.olive,
               opacity: 0.5,
             }}

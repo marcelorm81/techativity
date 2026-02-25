@@ -27,7 +27,7 @@ function getFillForAnswer(theme: QuestionTheme, seed: number): string {
 }
 
 function getShapeForAnswer(theme: QuestionTheme, seed: number): OrganicShape {
-  const shapes = ANSWER_SHAPES[theme] || [SHAPES.sun, SHAPES.bird, SHAPES.mountain];
+  const shapes = ANSWER_SHAPES[theme] || [SHAPES.cloud, SHAPES.sunBlob];
   return shapes[seed % shapes.length];
 }
 
@@ -54,12 +54,12 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
     [theme, answer.seed]
   );
 
-  // Text sizing based on blob radius
-  const nameFontSize = Math.max(8, Math.min(14, radius * 0.17));
-  const textFontSize = Math.max(7, Math.min(12, radius * 0.14));
-  const maxWidth = radius * 1.3;
+  // Text sizing based on blob radius — bigger fonts
+  const nameFontSize = Math.max(10, Math.min(18, radius * 0.2));
+  const textFontSize = Math.max(9, Math.min(15, radius * 0.16));
+  const maxWidth = radius * 1.4;
   const maxCharsPerLine = Math.floor(maxWidth / (textFontSize * 0.52));
-  const maxLines = Math.min(3, Math.floor((radius * 0.7) / (textFontSize * 1.3)));
+  const maxLines = Math.min(4, Math.floor((radius * 0.8) / (textFontSize * 1.3)));
 
   // Word-wrap the answer text
   const lines = useMemo(() => {
@@ -131,20 +131,20 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
         xmlns="http://www.w3.org/2000/svg"
         style={{ width: '100%', height: '100%', overflow: 'visible' }}
       >
-        {/* Organic shape background */}
+        {/* Organic shape background — cloud or sunBlob */}
         <g
           transform={`translate(${radius - (shape.width * shapeScale) / 2}, ${radius - (shape.height * shapeScale) / 2}) scale(${shapeScale})`}
         >
           <path
             d={shape.d}
             fill={fill}
-            opacity={0.6}
+            opacity={0.75}
             fillRule={shape.fillRule}
             clipRule={shape.clipRule}
           />
         </g>
 
-        {/* Name */}
+        {/* Name — white text */}
         <text
           x={radius}
           y={radius - lines.length * textFontSize * 0.6}
@@ -153,12 +153,12 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
           fontWeight="normal"
           fontSize={nameFontSize}
           fill={C.white}
-          opacity={0.95}
+          opacity={1}
         >
           {answer.name}
         </text>
 
-        {/* Answer text lines */}
+        {/* Answer text lines — white text */}
         {lines.map((line, i) => (
           <text
             key={i}
@@ -168,7 +168,7 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
             fontFamily="'Gambarino', 'Georgia', serif"
             fontSize={textFontSize}
             fill={C.white}
-            opacity={0.8}
+            opacity={0.9}
           >
             {line}
           </text>
@@ -221,7 +221,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
   };
 
   // Waiting placeholder shapes
-  const placeholderShape = SHAPES.sun;
+  const placeholderShape = SHAPES.cloud;
 
   return (
     <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: C.cream }}>
@@ -233,7 +233,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
             style={{
               backgroundColor: C.creamDark,
               fontFamily: F.body,
-              fontSize: 'clamp(0.55rem, 0.8vw, 0.7rem)',
+              fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
               letterSpacing: '0.08em',
               color: C.olive,
             }}
@@ -246,7 +246,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
             className="mt-2"
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(1.2rem, 2vw, 1.6rem)',
+              fontSize: 'clamp(1.8rem, 3vw, 2.6rem)',
               fontWeight: 400,
               color: C.olive,
             }}
@@ -260,7 +260,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
         <motion.p
           style={{
             fontFamily: F.title,
-            fontSize: 'clamp(0.65rem, 0.95vw, 0.85rem)',
+            fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
             fontStyle: 'italic',
             color: C.olive,
             opacity: 0.5,
@@ -289,8 +289,8 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {/* Animated placeholder organic shapes */}
-              <div className="relative w-32 h-32">
+              {/* Animated placeholder organic shapes — cloud + sunBlob */}
+              <div className="relative w-40 h-40">
                 <motion.div
                   className="absolute inset-0"
                   animate={{
@@ -311,8 +311,8 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                   }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
                 >
-                  <svg viewBox={SHAPES.bird.viewBox} className="w-full h-full">
-                    <path d={SHAPES.bird.d} fill={C.oliveLight} opacity={0.3} />
+                  <svg viewBox={SHAPES.sunBlob.viewBox} className="w-full h-full">
+                    <path d={SHAPES.sunBlob.d} fill={C.oliveLight} opacity={0.3} />
                   </svg>
                 </motion.div>
               </div>
@@ -321,7 +321,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                 transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                 style={{
                   fontFamily: F.body,
-                  fontSize: 'clamp(0.8rem, 1vw, 0.9rem)',
+                  fontSize: 'clamp(1rem, 1.3vw, 1.2rem)',
                   color: C.olive,
                   opacity: 0.4,
                 }}
@@ -354,7 +354,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
       {/* Answer count bar */}
       <div className="px-[7%] pb-[2.5%] flex items-center gap-3">
         <div
-          className="h-1 rounded-full flex-1"
+          className="h-1.5 rounded-full flex-1"
           style={{ backgroundColor: C.creamDark }}
         >
           <motion.div
@@ -368,7 +368,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
         <span
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(0.5rem, 0.7vw, 0.6rem)',
+            fontSize: 'clamp(0.7rem, 0.9vw, 0.85rem)',
             color: C.olive,
             opacity: 0.5,
           }}

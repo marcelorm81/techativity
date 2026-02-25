@@ -96,11 +96,11 @@ export default function SlideContainer({
 export function Pill({ text, dark = false }: { text: string; dark?: boolean }) {
   return (
     <div
-      className="inline-block px-4 py-1.5 rounded-full"
+      className="inline-block px-5 py-2 rounded-full"
       style={{
         backgroundColor: dark ? 'rgba(255,255,255,0.15)' : C.creamDark,
         fontFamily: F.body,
-        fontSize: 'clamp(0.6rem, 0.9vw, 0.75rem)',
+        fontSize: 'clamp(0.8rem, 1.1vw, 1rem)',
         letterSpacing: '0.08em',
         color: dark ? C.white : C.olive,
       }}
@@ -116,7 +116,7 @@ export function SlideNumber({ num, light = false }: { num: number; light?: boole
       className="absolute bottom-4 right-6"
       style={{
         fontFamily: F.body,
-        fontSize: '0.6rem',
+        fontSize: '0.8rem',
         color: light ? 'rgba(255,255,255,0.4)' : C.lightGray,
       }}
     >
@@ -131,7 +131,7 @@ export function SectionNumber({ num, dark = false }: { num: string; dark?: boole
       className="absolute top-4 right-12"
       style={{
         fontFamily: F.title,
-        fontSize: 'clamp(3rem, 5vw, 5rem)',
+        fontSize: 'clamp(4rem, 7vw, 7rem)',
         fontWeight: 400,
         color: dark ? 'rgba(255,255,255,0.15)' : C.creamDark,
         lineHeight: 1,

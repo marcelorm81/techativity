@@ -35,7 +35,7 @@ export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
         <motion.h1
           style={{
             fontFamily: F.title,
-            fontSize: 'clamp(3rem, 7.8vw, 6.5rem)',
+            fontSize: 'clamp(3.5rem, 9vw, 7.5rem)',
             fontWeight: 400,
             color: C.white,
             lineHeight: 0.95,
@@ -53,7 +53,7 @@ export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
           className="mt-[6%]"
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(1.2rem, 2.8vw, 2.3rem)',
+            fontSize: 'clamp(1.5rem, 3.2vw, 2.8rem)',
             color: C.white,
             textAlign: 'center',
           }}
@@ -75,16 +75,16 @@ export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
           transition={{ delay: 1, duration: 0.6 }}
         >
           <div className="flex flex-col items-end">
-            <span style={{ fontFamily: F.body, fontSize: 'clamp(0.6rem, 0.8vw, 0.7rem)', color: C.white, opacity: 0.7 }}>
+            <span style={{ fontFamily: F.body, fontSize: 'clamp(0.8rem, 1vw, 0.95rem)', color: C.white, opacity: 0.7 }}>
               Join at
             </span>
-            <span style={{ fontFamily: F.body, fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)', color: C.white }}>
+            <span style={{ fontFamily: F.body, fontSize: 'clamp(1rem, 1.3vw, 1.2rem)', color: C.white }}>
               {window.location.host}/join
             </span>
-            <span style={{ fontFamily: F.body, fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', color: C.white, letterSpacing: '0.15em', lineHeight: 1.1, marginTop: '0.2em' }}>
+            <span style={{ fontFamily: F.body, fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', color: C.white, letterSpacing: '0.15em', lineHeight: 1.1, marginTop: '0.2em' }}>
               {sessionInfo.sessionId}
             </span>
-            <span style={{ fontFamily: F.body, fontSize: 'clamp(0.5rem, 0.7vw, 0.6rem)', color: C.white, opacity: 0.5, marginTop: '0.3em' }}>
+            <span style={{ fontFamily: F.body, fontSize: 'clamp(0.7rem, 0.9vw, 0.85rem)', color: C.white, opacity: 0.5, marginTop: '0.3em' }}>
               {sessionInfo.participantCount} joined
             </span>
           </div>

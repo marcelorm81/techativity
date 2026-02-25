@@ -32,7 +32,7 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
       <motion.h1
         style={{
           fontFamily: F.title,
-          fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+          fontSize: 'clamp(3rem, 6vw, 5rem)',
           fontWeight: 400,
           color: C.white,
           lineHeight: 0.95,
@@ -50,7 +50,7 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
         className="mt-6 max-w-[60%]"
         style={{
           fontFamily: F.body,
-          fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+          fontSize: 'clamp(1.1rem, 1.6vw, 1.4rem)',
           color: 'rgba(255,255,255,0.6)',
           lineHeight: 1.6,
           whiteSpace: 'pre-line',

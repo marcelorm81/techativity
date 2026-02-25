@@ -33,11 +33,11 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
           transition={{ delay: 0.1, duration: 0.4 }}
         >
           <span
-            className="inline-block px-4 py-1.5 rounded-full"
+            className="inline-block px-5 py-2 rounded-full"
             style={{
               backgroundColor: C.creamDark,
               fontFamily: F.body,
-              fontSize: 'clamp(0.7rem, 1vw, 0.85rem)',
+              fontSize: 'clamp(0.9rem, 1.3vw, 1.15rem)',
               letterSpacing: '0.08em',
               color: C.olive,
             }}
@@ -50,7 +50,7 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
         <motion.h1
           style={{
             fontFamily: F.title,
-            fontSize: 'clamp(2rem, 5vw, 4rem)',
+            fontSize: 'clamp(2.8rem, 6vw, 5rem)',
             fontWeight: 400,
             color: C.olive,
             lineHeight: 1.05,
@@ -69,7 +69,7 @@ export default function StatementSlide({ slide }: { slide: StatementSlideData })
             className="mt-8"
             style={{
               fontFamily: F.body,
-              fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+              fontSize: 'clamp(1.1rem, 1.6vw, 1.4rem)',
               color: C.olive,
               opacity: 0.6,
               lineHeight: 1.6,

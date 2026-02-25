@@ -44,7 +44,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
           <motion.h1
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+              fontSize: 'clamp(3rem, 6vw, 4.5rem)',
               fontWeight: 400,
               color: C.olive,
               lineHeight: 0.95,
@@ -61,7 +61,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
             className="mt-auto mb-[12%]"
             style={{
               fontFamily: F.body,
-              fontSize: 'clamp(0.6rem, 0.85vw, 0.72rem)',
+              fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
               color: C.olive,
               opacity: 0.5,
               lineHeight: 1.6,
@@ -81,7 +81,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
         <motion.p
           style={{
             fontFamily: F.title,
-            fontSize: 'clamp(1rem, 1.8vw, 1.3rem)',
+            fontSize: 'clamp(1.4rem, 2.4vw, 2rem)',
             color: C.white,
             fontStyle: 'italic',
           }}
@@ -96,7 +96,7 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
           className="mt-5"
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+            fontSize: 'clamp(1.1rem, 1.6vw, 1.35rem)',
             color: 'rgba(255,255,255,0.6)',
           }}
           initial={{ opacity: 0 }}

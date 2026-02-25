@@ -1,7 +1,7 @@
 // ContentSlide.tsx — Content slide with organic shape containers per Figma
 import { motion } from 'framer-motion';
 import { C, F } from '../../lib/design-system';
-import { SHAPES } from '../../lib/organic-shapes';
+import { SHAPES, TEXT_SHAPES } from '../../lib/organic-shapes';
 import type { OrganicShape } from '../../lib/organic-shapes';
 import { Pill, SlideNumber } from './SlideContainer';
 import type { ContentSlide as ContentSlideData } from '../../data/slides-data';
@@ -16,8 +16,8 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-// Organic shapes to use as card containers (rotate through these)
-const CARD_SHAPES: OrganicShape[] = [SHAPES.man, SHAPES.bird, SHAPES.sun];
+// Use cloud & sunBlob for card shapes — they host text best
+const CARD_SHAPES: OrganicShape[] = TEXT_SHAPES;
 
 // ─── Organic Shape Card ────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ function ShapeCard({
   return (
     <motion.div
       className="relative flex-1 flex items-center justify-center"
-      style={{ minHeight: '260px' }}
+      style={{ minHeight: '280px' }}
       variants={fadeUp}
     >
       {/* Organic shape background */}
@@ -71,20 +71,20 @@ function ShapeCard({
         </svg>
       </motion.div>
 
-      {/* Text content overlaid on shape */}
+      {/* Text content overlaid on shape — white text */}
       <div
-        className="relative z-10 flex flex-col items-center justify-center text-center px-[18%] py-[12%]"
+        className="relative z-10 flex flex-col items-center justify-center text-center px-[16%] py-[10%]"
         style={{ maxWidth: '100%' }}
       >
         {title && (
           <h3
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)',
+              fontSize: 'clamp(1.6rem, 2.8vw, 2.4rem)',
               fontWeight: 400,
               color: C.white,
               lineHeight: 1.1,
-              marginBottom: '0.6rem',
+              marginBottom: '0.8rem',
             }}
           >
             {title}
@@ -93,10 +93,10 @@ function ShapeCard({
         <p
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(0.6rem, 1vw, 0.85rem)',
+            fontSize: 'clamp(0.85rem, 1.3vw, 1.15rem)',
             color: C.white,
-            opacity: 0.85,
-            lineHeight: 1.4,
+            opacity: 0.9,
+            lineHeight: 1.5,
             whiteSpace: 'pre-line',
           }}
         >
@@ -137,7 +137,7 @@ export default function ContentSlide({
             className="mt-4"
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
+              fontSize: 'clamp(2.4rem, 4.5vw, 3.8rem)',
               fontWeight: 400,
               color: headingColor,
               lineHeight: 1.05,
@@ -153,7 +153,7 @@ export default function ContentSlide({
             className="mt-3"
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(1.2rem, 2vw, 1.6rem)',
+              fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)',
               fontWeight: 400,
               color: bodyColor,
               lineHeight: 1.15,
@@ -169,7 +169,7 @@ export default function ContentSlide({
             className="mt-2"
             style={{
               fontFamily: F.title,
-              fontSize: 'clamp(1.4rem, 2.5vw, 2rem)',
+              fontSize: 'clamp(1.8rem, 3vw, 2.6rem)',
               fontWeight: 400,
               color: headingColor,
               lineHeight: 1.1,
@@ -187,7 +187,7 @@ export default function ContentSlide({
             className="mt-5 max-w-[75%]"
             style={{
               fontFamily: F.body,
-              fontSize: 'clamp(0.8rem, 1.3vw, 1.05rem)',
+              fontSize: 'clamp(1.1rem, 1.7vw, 1.45rem)',
               color: bodyColor,
               lineHeight: 1.5,
               whiteSpace: 'pre-line',
@@ -197,7 +197,7 @@ export default function ContentSlide({
           </motion.p>
         )}
 
-        {/* Cards — displayed as organic shape containers */}
+        {/* Cards — displayed as cloud/sunBlob organic shape containers */}
         {slide.cards && slide.cards.length > 0 && (
           <motion.div
             variants={fadeUp}
@@ -223,7 +223,7 @@ export default function ContentSlide({
               <h3
                 style={{
                   fontFamily: F.title,
-                  fontSize: 'clamp(1rem, 1.5vw, 1.2rem)',
+                  fontSize: 'clamp(1.3rem, 2vw, 1.7rem)',
                   fontWeight: 400,
                   color: C.olive,
                   marginBottom: '0.8rem',
@@ -236,10 +236,10 @@ export default function ContentSlide({
                   key={i}
                   style={{
                     fontFamily: F.body,
-                    fontSize: 'clamp(0.6rem, 0.9vw, 0.78rem)',
+                    fontSize: 'clamp(0.85rem, 1.2vw, 1.05rem)',
                     color: C.olive,
                     opacity: 0.7,
-                    marginBottom: '0.35rem',
+                    marginBottom: '0.4rem',
                   }}
                 >
                   → {item}
@@ -250,7 +250,7 @@ export default function ContentSlide({
                   className="mt-4"
                   style={{
                     fontFamily: F.body,
-                    fontSize: '0.65rem',
+                    fontSize: 'clamp(0.75rem, 1vw, 0.9rem)',
                     color: C.olive,
                     fontStyle: 'italic',
                     opacity: 0.5,
@@ -265,7 +265,7 @@ export default function ContentSlide({
               <h3
                 style={{
                   fontFamily: F.title,
-                  fontSize: 'clamp(1rem, 1.5vw, 1.2rem)',
+                  fontSize: 'clamp(1.3rem, 2vw, 1.7rem)',
                   fontWeight: 400,
                   color: C.white,
                   marginBottom: '0.8rem',
@@ -278,10 +278,10 @@ export default function ContentSlide({
                   key={i}
                   style={{
                     fontFamily: F.body,
-                    fontSize: 'clamp(0.6rem, 0.9vw, 0.78rem)',
+                    fontSize: 'clamp(0.85rem, 1.2vw, 1.05rem)',
                     color: C.white,
                     opacity: 0.8,
-                    marginBottom: '0.35rem',
+                    marginBottom: '0.4rem',
                   }}
                 >
                   → {item}
@@ -292,7 +292,7 @@ export default function ContentSlide({
                   className="mt-4"
                   style={{
                     fontFamily: F.body,
-                    fontSize: '0.65rem',
+                    fontSize: 'clamp(0.75rem, 1vw, 0.9rem)',
                     color: C.white,
                     fontStyle: 'italic',
                     opacity: 0.6,
@@ -319,7 +319,7 @@ export default function ContentSlide({
                 <p
                   style={{
                     fontFamily: F.title,
-                    fontSize: 'clamp(0.75rem, 1.1vw, 0.95rem)',
+                    fontSize: 'clamp(1rem, 1.5vw, 1.3rem)',
                     fontWeight: 400,
                     color: i === slide.quoteCards!.length - 1 ? C.white : C.olive,
                     fontStyle: 'italic',
@@ -336,17 +336,17 @@ export default function ContentSlide({
 
         {/* Topics list */}
         {slide.topics && (
-          <motion.div variants={fadeUp} className="mt-5 space-y-3">
+          <motion.div variants={fadeUp} className="mt-5 space-y-4">
             {slide.topics.map((topic, i) => (
               <div key={i} className="flex items-center gap-4">
                 <div
-                  className="px-4 py-2.5 rounded-xl shrink-0"
-                  style={{ backgroundColor: C.olive, minWidth: '9rem' }}
+                  className="px-5 py-3 rounded-xl shrink-0"
+                  style={{ backgroundColor: C.olive, minWidth: '10rem' }}
                 >
                   <span
                     style={{
                       fontFamily: F.title,
-                      fontSize: 'clamp(0.65rem, 0.9vw, 0.78rem)',
+                      fontSize: 'clamp(0.9rem, 1.2vw, 1.1rem)',
                       fontWeight: 400,
                       color: C.white,
                     }}
@@ -357,7 +357,7 @@ export default function ContentSlide({
                 <p
                   style={{
                     fontFamily: F.body,
-                    fontSize: 'clamp(0.6rem, 0.85vw, 0.75rem)',
+                    fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
                     color: C.olive,
                     lineHeight: 1.4,
                     whiteSpace: 'pre-line',
@@ -380,7 +380,7 @@ export default function ContentSlide({
               <p
                 style={{
                   fontFamily: F.title,
-                  fontSize: 'clamp(0.75rem, 1.1vw, 0.9rem)',
+                  fontSize: 'clamp(1rem, 1.4vw, 1.2rem)',
                   color: isDark ? C.white : C.olive,
                   fontStyle: 'italic',
                 }}
