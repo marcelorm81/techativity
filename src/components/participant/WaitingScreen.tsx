@@ -315,7 +315,7 @@ export default function WaitingScreen({
         {/* Greeting */}
         <h2
           style={{
-            fontFamily: "'Georgia', serif",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '1.1rem',
             fontWeight: 'bold',
             color: C.darkText,
@@ -329,7 +329,7 @@ export default function WaitingScreen({
         {/* Waiting message */}
         <motion.p
           style={{
-            fontFamily: "'Calibri', sans-serif",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '0.8rem',
             color: C.midGray,
             textAlign: 'center',
@@ -345,7 +345,7 @@ export default function WaitingScreen({
         <div
           className="flex items-center gap-4 mb-2"
           style={{
-            fontFamily: "'Consolas', monospace",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '1.1rem',
             color: C.sage,
             letterSpacing: '0.1em',
@@ -377,7 +377,7 @@ export default function WaitingScreen({
         <p
           className="mt-2"
           style={{
-            fontFamily: "'Calibri', sans-serif",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '0.65rem',
             color: C.lightGray,
             textAlign: 'center',

@@ -1,7 +1,7 @@
 // ThankYou.tsx — Session complete screen with participant's 3 organic shapes
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
+import { C, F } from '../../lib/design-system';
 import { hashToSeed } from '../../lib/blob-generator';
 import { SHAPES, SHAPE_KEYS } from '../../lib/organic-shapes';
 import type { OrganicShape } from '../../lib/organic-shapes';
@@ -11,9 +11,9 @@ interface ThankYouProps {
 }
 
 const THEME_DISPLAY: { label: string; color: string }[] = [
-  { label: 'Identity', color: C.sage },
-  { label: 'Reality', color: C.warmGray },
-  { label: 'Meaning', color: C.sageLight },
+  { label: 'Identity', color: C.olive },
+  { label: 'Reality', color: C.oliveLight },
+  { label: 'Meaning', color: C.oliveDark },
 ];
 
 export default function ThankYou({ name }: ThankYouProps) {
@@ -44,7 +44,7 @@ export default function ThankYou({ name }: ThankYouProps) {
         transition={{ duration: 0.6 }}
       >
         {/* Three organic shapes in a row */}
-        <div className="flex items-center gap-5 mb-6">
+        <div className="flex items-center gap-5 mb-8">
           {shapes.map(({ label, color, shape }, i) => (
             <motion.div
               key={label}
@@ -87,13 +87,13 @@ export default function ThankYou({ name }: ThankYouProps) {
                 </svg>
               </motion.div>
               <span
-                className="mt-1"
+                className="mt-2"
                 style={{
-                  fontFamily: "'Consolas', monospace",
-                  fontSize: '0.55rem',
+                  fontFamily: F.body,
+                  fontSize: '0.6rem',
                   letterSpacing: '0.08em',
-                  color: C.lightGray,
-                  textTransform: 'uppercase' as const,
+                  color: C.olive,
+                  opacity: 0.4,
                 }}
               >
                 {label}
@@ -105,10 +105,10 @@ export default function ThankYou({ name }: ThankYouProps) {
         {/* Thank you message */}
         <motion.h2
           style={{
-            fontFamily: "'Georgia', serif",
-            fontSize: '1.4rem',
-            fontWeight: 'bold',
-            color: C.darkText,
+            fontFamily: F.title,
+            fontSize: '1.6rem',
+            fontWeight: 400,
+            color: C.olive,
             textAlign: 'center',
           }}
           initial={{ opacity: 0, y: 10 }}
@@ -119,16 +119,17 @@ export default function ThankYou({ name }: ThankYouProps) {
         </motion.h2>
 
         <motion.p
-          className="mt-3"
+          className="mt-4"
           style={{
-            fontFamily: "'Calibri', sans-serif",
-            fontSize: '0.9rem',
-            color: C.midGray,
+            fontFamily: F.body,
+            fontSize: '0.95rem',
+            color: C.olive,
+            opacity: 0.5,
             textAlign: 'center',
             lineHeight: 1.5,
           }}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: 0.5 }}
           transition={{ delay: 1 }}
         >
           Your voice shaped this session.
@@ -137,13 +138,13 @@ export default function ThankYou({ name }: ThankYouProps) {
         </motion.p>
 
         <motion.div
-          className="mt-6 px-4 py-2 rounded-full"
+          className="mt-7 px-5 py-2 rounded-full"
           style={{
-            backgroundColor: C.sagePale,
-            fontFamily: "'Consolas', monospace",
-            fontSize: '0.6rem',
-            letterSpacing: '0.1em',
-            color: C.accentOlive,
+            backgroundColor: C.creamDark,
+            fontFamily: F.body,
+            fontSize: '0.65rem',
+            letterSpacing: '0.08em',
+            color: C.olive,
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -114,7 +114,7 @@ export default function ParticipantPage() {
         >
           <h2
             style={{
-              fontFamily: "'Georgia', serif",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '1.2rem',
               fontWeight: 'bold',
               color: C.darkText,
@@ -126,7 +126,7 @@ export default function ParticipantPage() {
           <p
             className="mt-3"
             style={{
-              fontFamily: "'Calibri', sans-serif",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '0.85rem',
               color: '#c44',
               textAlign: 'center',
@@ -139,7 +139,7 @@ export default function ParticipantPage() {
             style={{
               backgroundColor: C.sage,
               color: C.white,
-              fontFamily: "'Calibri', sans-serif",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '0.85rem',
               border: 'none',
             }}

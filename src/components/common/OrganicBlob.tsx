@@ -216,7 +216,7 @@ export function AnswerBlob({
           x={r}
           y={r - displayLines.length * fontSize * 0.5}
           textAnchor="middle"
-          fontFamily="'Georgia', serif"
+          fontFamily="'Gambarino', 'Georgia', serif"
           fontWeight="bold"
           fontSize={nameFontSize}
           fill={C.darkText}
@@ -231,7 +231,7 @@ export function AnswerBlob({
             x={r}
             y={r - displayLines.length * fontSize * 0.5 + nameFontSize * 1.3 + i * fontSize * 1.25}
             textAnchor="middle"
-            fontFamily="'Calibri', 'Helvetica Neue', sans-serif"
+            fontFamily="'Gambarino', 'Georgia', serif"
             fontSize={fontSize}
             fill={C.midGray}
           >

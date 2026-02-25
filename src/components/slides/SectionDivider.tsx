@@ -1,13 +1,14 @@
+// SectionDivider.tsx — Section transition slide with large Gambarino heading
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
-import MorphingShape from '../common/MorphingShape';
-import { SLIDE_SHAPES, SHAPES } from '../../lib/organic-shapes';
+import { C, F } from '../../lib/design-system';
+import { StaticOrganicShape } from '../common/MorphingShape';
+import { SHAPES } from '../../lib/organic-shapes';
 import { Pill, SectionNumber } from './SlideContainer';
 import type { SectionSlide } from '../../data/slides-data';
 
 export default function SectionDivider({ slide }: { slide: SectionSlide }) {
   return (
-    <div className="absolute inset-0 flex flex-col justify-center pl-[7%] pr-[7%]">
+    <div className="absolute inset-0 overflow-hidden flex flex-col justify-center pl-[7%] pr-[7%]">
       {/* Pill */}
       <motion.div
         className="absolute top-[8%] left-[7%]"
@@ -30,11 +31,11 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
       {/* Heading */}
       <motion.h1
         style={{
-          fontFamily: "'Georgia', serif",
-          fontSize: 'clamp(2.5rem, 4.2vw, 3.5rem)',
-          fontWeight: 'bold',
+          fontFamily: F.title,
+          fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+          fontWeight: 400,
           color: C.white,
-          lineHeight: 0.92,
+          lineHeight: 0.95,
           whiteSpace: 'pre-line',
         }}
         initial={{ opacity: 0, y: 20 }}
@@ -48,9 +49,9 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
       <motion.p
         className="mt-6 max-w-[60%]"
         style={{
-          fontFamily: "'Calibri', 'Helvetica Neue', sans-serif",
-          fontSize: 'clamp(0.75rem, 1.1vw, 0.9rem)',
-          color: C.warmGray,
+          fontFamily: F.body,
+          fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+          color: 'rgba(255,255,255,0.6)',
           lineHeight: 1.6,
           whiteSpace: 'pre-line',
         }}
@@ -61,12 +62,11 @@ export default function SectionDivider({ slide }: { slide: SectionSlide }) {
         {slide.body}
       </motion.p>
 
-      {/* Decorative organic shape — morphs phone → mountain */}
-      <MorphingShape
-        shapes={[SLIDE_SHAPES.section, SHAPES.mountain]}
-        fill={C.sage}
-        opacity={0.12}
-        morphDuration={12}
+      {/* Decorative organic shape — bottom right */}
+      <StaticOrganicShape
+        shape={SHAPES.mountain}
+        fill={C.white}
+        opacity={0.08}
         floatAmp={3}
         floatDuration={10}
         style={{

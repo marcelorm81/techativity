@@ -1,7 +1,7 @@
 // JoinForm.tsx — Participant name + role entry screen (+ optional session code)
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
+import { C, F } from '../../lib/design-system';
 import { SHAPES } from '../../lib/organic-shapes';
 import TechativityLogo from '../TechativityLogo';
 
@@ -12,20 +12,20 @@ interface JoinFormProps {
 }
 
 const inputStyle = {
-  backgroundColor: C.warmWhite,
-  border: `1.5px solid ${C.sageLight}`,
-  fontFamily: "'Calibri', sans-serif",
+  backgroundColor: C.white,
+  border: `1.5px solid ${C.creamDark}`,
+  fontFamily: F.body,
   fontSize: '1rem',
-  color: C.darkText,
+  color: C.olive,
 };
 
 function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
-  e.target.style.borderColor = C.sage;
-  e.target.style.boxShadow = `0 0 0 3px ${C.sagePale}`;
+  e.target.style.borderColor = C.olive;
+  e.target.style.boxShadow = `0 0 0 3px ${C.creamDark}`;
 }
 
 function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
-  e.target.style.borderColor = C.sageLight;
+  e.target.style.borderColor = C.creamDark;
   e.target.style.boxShadow = 'none';
 }
 
@@ -60,22 +60,22 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
       {/* Decorative organic shapes */}
       <motion.div
         className="absolute pointer-events-none"
-        style={{ top: '-8%', right: '-12%', width: '55%', opacity: 0.12 }}
+        style={{ top: '-8%', right: '-12%', width: '55%', opacity: 0.08 }}
         animate={{ y: [0, -6, 0], rotate: [0, 2, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       >
         <svg viewBox={SHAPES.bird.viewBox} preserveAspectRatio="xMidYMid meet">
-          <path d={SHAPES.bird.d} fill={C.sage} />
+          <path d={SHAPES.bird.d} fill={C.olive} />
         </svg>
       </motion.div>
       <motion.div
         className="absolute pointer-events-none"
-        style={{ bottom: '-5%', left: '-10%', width: '40%', opacity: 0.1 }}
+        style={{ bottom: '-5%', left: '-10%', width: '40%', opacity: 0.06 }}
         animate={{ y: [0, 4, 0], rotate: [0, -1.5, 0] }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       >
         <svg viewBox={SHAPES.sun.viewBox} preserveAspectRatio="xMidYMid meet">
-          <path d={SHAPES.sun.d} fill={C.sageLight} />
+          <path d={SHAPES.sun.d} fill={C.oliveLight} />
         </svg>
       </motion.div>
 
@@ -89,19 +89,18 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
         {/* Logo / title */}
         <div className="flex flex-col items-center mb-8">
           <TechativityLogo
-            color={C.accentOlive}
+            color={C.olive}
             width="260px"
             className="mb-3"
           />
           <motion.div
-            className="inline-block px-3 py-1 rounded-full"
+            className="inline-block px-4 py-1.5 rounded-full"
             style={{
-              backgroundColor: C.sagePale,
-              fontFamily: "'Consolas', monospace",
-              fontSize: '0.65rem',
-              letterSpacing: '0.15em',
-              color: C.accentOlive,
-              textTransform: 'uppercase' as const,
+              backgroundColor: C.creamDark,
+              fontFamily: F.body,
+              fontSize: '0.7rem',
+              letterSpacing: '0.08em',
+              color: C.olive,
             }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -110,11 +109,12 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
             Live session
           </motion.div>
           <p
-            className="mt-2"
+            className="mt-3"
             style={{
-              fontFamily: "'Calibri', sans-serif",
-              fontSize: '0.85rem',
-              color: C.midGray,
+              fontFamily: F.body,
+              fontSize: '0.9rem',
+              color: C.olive,
+              opacity: 0.6,
             }}
           >
             Join the conversation
@@ -127,10 +127,9 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
             <div className="mb-4">
               <label
                 style={{
-                  fontFamily: "'Calibri', sans-serif",
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  color: C.darkText,
+                  fontFamily: F.body,
+                  fontSize: '0.8rem',
+                  color: C.olive,
                   display: 'block',
                   marginBottom: '0.4rem',
                 }}
@@ -147,7 +146,6 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
                 className="w-full px-4 py-3 rounded-xl outline-none transition-shadow tracking-widest text-center font-semibold"
                 style={{
                   ...inputStyle,
-                  fontFamily: "'Consolas', monospace",
                   fontSize: '1.2rem',
                   letterSpacing: '0.2em',
                 }}
@@ -160,10 +158,9 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
           <div className="mb-4">
             <label
               style={{
-                fontFamily: "'Calibri', sans-serif",
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                color: C.darkText,
+                fontFamily: F.body,
+                fontSize: '0.8rem',
+                color: C.olive,
                 display: 'block',
                 marginBottom: '0.4rem',
               }}
@@ -187,10 +184,9 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
           <div className="mb-4">
             <label
               style={{
-                fontFamily: "'Calibri', sans-serif",
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                color: C.darkText,
+                fontFamily: F.body,
+                fontSize: '0.8rem',
+                color: C.olive,
                 display: 'block',
                 marginBottom: '0.4rem',
               }}
@@ -214,8 +210,8 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
             <motion.p
               className="mb-3 text-center"
               style={{
-                fontFamily: "'Calibri', sans-serif",
-                fontSize: '0.8rem',
+                fontFamily: F.body,
+                fontSize: '0.85rem',
                 color: '#c44',
               }}
               initial={{ opacity: 0 }}
@@ -228,12 +224,12 @@ export default function JoinForm({ onJoin, error, showSessionCode }: JoinFormPro
           <motion.button
             type="submit"
             disabled={!canSubmit || submitting}
-            className="w-full py-3.5 rounded-xl font-semibold transition-all"
+            className="w-full py-3.5 rounded-xl transition-all"
             style={{
-              backgroundColor: canSubmit ? C.sage : C.sageLight,
-              color: canSubmit ? C.white : C.warmGray,
-              fontFamily: "'Calibri', sans-serif",
-              fontSize: '1rem',
+              backgroundColor: canSubmit ? C.olive : C.creamDark,
+              color: canSubmit ? C.white : C.lightGray,
+              fontFamily: F.body,
+              fontSize: '1.05rem',
               border: 'none',
               cursor: canSubmit ? 'pointer' : 'default',
               opacity: submitting ? 0.7 : 1,

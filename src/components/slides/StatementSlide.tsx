@@ -1,82 +1,88 @@
+// StatementSlide.tsx — Large statement text with single decorative organic shape
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
-import MorphingShape from '../common/MorphingShape';
-import { SLIDE_SHAPES } from '../../lib/organic-shapes';
+import { C, F } from '../../lib/design-system';
+import { StaticOrganicShape } from '../common/MorphingShape';
+import { SHAPES } from '../../lib/organic-shapes';
 import type { StatementSlide as StatementSlideData } from '../../data/slides-data';
 
 export default function StatementSlide({ slide }: { slide: StatementSlideData }) {
-  const [shape1, shape2] = SLIDE_SHAPES.statement;
-
   return (
-    <div className="absolute inset-0 flex flex-col justify-center pl-[7%] pr-[7%]">
-      {/* Decorative organic shapes */}
-      <MorphingShape
-        shapes={[shape1, shape2]}
-        fill={C.sageLight}
-        opacity={0.35}
-        morphDuration={12}
-        floatAmp={3}
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Large decorative organic shape — right side */}
+      <StaticOrganicShape
+        shape={SHAPES.bird}
+        fill={C.olive}
+        opacity={0.15}
+        floatAmp={4}
         floatDuration={10}
         style={{
-          left: '10%',
-          top: '-8%',
-          width: '85%',
-          height: '95%',
-        }}
-      />
-      <MorphingShape
-        shapes={[shape2, shape1]}
-        fill={C.sage}
-        opacity={0.25}
-        morphDuration={14}
-        floatAmp={3}
-        floatDuration={13}
-        phase={0.3}
-        style={{
-          left: '20%',
+          right: '-8%',
           top: '5%',
-          width: '85%',
-          height: '95%',
+          width: '50%',
+          height: '90%',
         }}
       />
 
-      {/* Heading */}
-      <motion.h1
-        className="relative z-10"
-        style={{
-          fontFamily: "'Georgia', serif",
-          fontSize: 'clamp(2.5rem, 4vw, 3.2rem)',
-          fontWeight: 'bold',
-          color: C.accentOlive,
-          lineHeight: 0.92,
-          whiteSpace: 'pre-line',
-        }}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.6, ease: 'easeOut' }}
-      >
-        {slide.heading}
-      </motion.h1>
-
-      {/* Note */}
-      {slide.note && (
-        <motion.p
-          className="relative z-10 mt-6"
-          style={{
-            fontFamily: "'Calibri', 'Helvetica Neue', sans-serif",
-            fontSize: 'clamp(0.75rem, 1.1vw, 0.9rem)',
-            color: C.accentOlive,
-            fontStyle: 'italic',
-            whiteSpace: 'pre-line',
-            lineHeight: 1.6,
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
+      {/* Content — left-aligned, vertically centered */}
+      <div className="absolute inset-0 flex flex-col justify-center pl-[8%] pr-[50%]">
+        {/* Small label */}
+        <motion.div
+          className="mb-6"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
         >
-          {slide.note}
-        </motion.p>
-      )}
+          <span
+            className="inline-block px-4 py-1.5 rounded-full"
+            style={{
+              backgroundColor: C.creamDark,
+              fontFamily: F.body,
+              fontSize: 'clamp(0.7rem, 1vw, 0.85rem)',
+              letterSpacing: '0.08em',
+              color: C.olive,
+            }}
+          >
+            {slide.heading?.split('\n')[0] || 'Before we start'}
+          </span>
+        </motion.div>
+
+        {/* Main statement text — very large Gambarino */}
+        <motion.h1
+          style={{
+            fontFamily: F.title,
+            fontSize: 'clamp(2rem, 5vw, 4rem)',
+            fontWeight: 400,
+            color: C.olive,
+            lineHeight: 1.05,
+            whiteSpace: 'pre-line',
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25, duration: 0.6 }}
+        >
+          {slide.heading}
+        </motion.h1>
+
+        {/* Optional note */}
+        {slide.note && (
+          <motion.p
+            className="mt-8"
+            style={{
+              fontFamily: F.body,
+              fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+              color: C.olive,
+              opacity: 0.6,
+              lineHeight: 1.6,
+              whiteSpace: 'pre-line',
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            {slide.note}
+          </motion.p>
+        )}
+      </div>
     </div>
   );
 }

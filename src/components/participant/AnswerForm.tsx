@@ -58,7 +58,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
           className="inline-block self-start px-3 py-1 rounded-full mb-2"
           style={{
             backgroundColor: C.sagePale,
-            fontFamily: "'Consolas', monospace",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '0.6rem',
             letterSpacing: '0.12em',
             color: C.accentOlive,
@@ -75,7 +75,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
         <motion.h2
           className="mb-6"
           style={{
-            fontFamily: "'Georgia', serif",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '1.4rem',
             fontWeight: 'bold',
             color: C.darkText,
@@ -106,7 +106,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
               style={{
                 backgroundColor: C.warmWhite,
                 border: `1.5px solid ${C.sageLight}`,
-                fontFamily: "'Calibri', sans-serif",
+                fontFamily: "'Gambarino', 'Georgia', serif",
                 fontSize: '1rem',
                 color: C.darkText,
                 lineHeight: 1.5,
@@ -125,7 +125,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
             <div className="flex justify-between mt-1.5 px-1">
               <span
                 style={{
-                  fontFamily: "'Calibri', sans-serif",
+                  fontFamily: "'Gambarino', 'Georgia', serif",
                   fontSize: '0.7rem',
                   color: C.lightGray,
                 }}
@@ -134,7 +134,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
               </span>
               <span
                 style={{
-                  fontFamily: "'Consolas', monospace",
+                  fontFamily: "'Gambarino', 'Georgia', serif",
                   fontSize: '0.65rem',
                   color: text.length > maxLen * 0.9 ? '#c44' : C.lightGray,
                 }}
@@ -158,7 +158,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
               style={{
                 backgroundColor: text.trim() ? C.sage : C.sageLight,
                 color: text.trim() ? C.white : C.warmGray,
-                fontFamily: "'Calibri', sans-serif",
+                fontFamily: "'Gambarino', 'Georgia', serif",
                 fontSize: '1rem',
                 border: 'none',
                 cursor: text.trim() ? 'pointer' : 'default',

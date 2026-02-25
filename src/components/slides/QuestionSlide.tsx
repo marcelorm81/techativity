@@ -1,112 +1,95 @@
+// QuestionSlide.tsx — Centered question with small decorative shape icon
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
+import { C, F } from '../../lib/design-system';
 import { StaticOrganicShape } from '../common/MorphingShape';
-import { SLIDE_SHAPES } from '../../lib/organic-shapes';
+import { SHAPES } from '../../lib/organic-shapes';
 import type { QuestionSlide as QuestionSlideData } from '../../data/slides-data';
 
 export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
-  const qNum = slide.question ? slide.question.substring(0, 2) : '';
+  // Strip Q number prefix if present
+  const questionText = slide.question.replace(/^Q\d\s*/, '');
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center p-[4%]">
-      {/* Main card */}
+    <div className="absolute inset-0 overflow-hidden flex flex-col items-center justify-center">
+      {/* Small decorative shape icon above question */}
       <motion.div
-        className="relative w-[90%] h-[85%] rounded-xl overflow-hidden flex flex-col"
-        style={{ backgroundColor: C.white }}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        className="mb-8"
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
       >
-        <div className="flex-1 px-[6%] pt-[5%] pb-[3%] flex flex-col justify-center">
-          {/* Q number */}
-          <motion.span
-            style={{
-              fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(2rem, 3.5vw, 3rem)',
-              fontWeight: 'bold',
-              color: C.sageLight,
-              lineHeight: 1,
-            }}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          >
-            {qNum}
-          </motion.span>
-
-          {/* Question text */}
-          <motion.h2
-            className="mt-3"
-            style={{
-              fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)',
-              fontWeight: 'bold',
-              color: C.black,
-              lineHeight: 1.2,
-              whiteSpace: 'pre-line',
-            }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.5 }}
-          >
-            {slide.question.replace(/^Q\d\s*/, '')}
-          </motion.h2>
-
-          {/* Follow-up */}
-          {slide.followup && (
-            <motion.p
-              className="mt-4"
-              style={{
-                fontFamily: "'Calibri', sans-serif",
-                fontSize: 'clamp(0.75rem, 1.1vw, 0.9rem)',
-                color: C.sageDark,
-                fontStyle: 'italic',
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              {slide.followup}
-            </motion.p>
-          )}
-        </div>
-
-        {/* Mountain accent */}
         <StaticOrganicShape
-          shape={SLIDE_SHAPES.question}
-          fill={C.sage}
-          opacity={0.2}
-          floatAmp={2}
-          floatDuration={5}
+          shape={SHAPES.sun}
+          fill={C.olive}
+          opacity={0.25}
+          floatAmp={3}
+          floatDuration={7}
           style={{
-            top: '5%',
-            right: '3%',
-            width: '12%',
-            height: '18%',
+            position: 'relative',
+            width: 'clamp(80px, 10vw, 140px)',
+            height: 'clamp(80px, 10vw, 140px)',
           }}
         />
-
-        {/* Bottom notes strip */}
-        {slide.notes && (
-          <motion.div
-            className="px-[6%] py-3"
-            style={{ backgroundColor: C.sagePale }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.4 }}
-          >
-            <p
-              style={{
-                fontFamily: "'Calibri', sans-serif",
-                fontSize: '0.6rem',
-                color: C.sageDark,
-              }}
-            >
-              {slide.notes}
-            </p>
-          </motion.div>
-        )}
       </motion.div>
+
+      {/* Question text — centered, large Gambarino */}
+      <motion.h2
+        className="px-[12%] text-center"
+        style={{
+          fontFamily: F.title,
+          fontSize: 'clamp(1.8rem, 4.5vw, 3.8rem)',
+          fontWeight: 400,
+          color: C.olive,
+          lineHeight: 1.1,
+          whiteSpace: 'pre-line',
+        }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+      >
+        {questionText}
+      </motion.h2>
+
+      {/* Follow-up text */}
+      {slide.followup && (
+        <motion.p
+          className="mt-6 px-[15%] text-center"
+          style={{
+            fontFamily: F.body,
+            fontSize: 'clamp(0.8rem, 1.3vw, 1.1rem)',
+            color: C.olive,
+            opacity: 0.5,
+            fontStyle: 'italic',
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          transition={{ delay: 0.6 }}
+        >
+          {slide.followup}
+        </motion.p>
+      )}
+
+      {/* Notes strip at bottom */}
+      {slide.notes && (
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 px-[7%] py-4"
+          style={{ backgroundColor: C.creamDark }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.4 }}
+        >
+          <p
+            style={{
+              fontFamily: F.body,
+              fontSize: 'clamp(0.55rem, 0.8vw, 0.7rem)',
+              color: C.olive,
+              opacity: 0.5,
+            }}
+          >
+            {slide.notes}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }

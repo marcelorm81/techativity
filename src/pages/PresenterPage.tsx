@@ -128,7 +128,7 @@ export default function PresenterPage() {
           />
           <p
             style={{
-              fontFamily: "'Calibri', sans-serif",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '0.9rem',
               color: C.warmGray,
             }}
@@ -144,7 +144,7 @@ export default function PresenterPage() {
               style={{
                 backgroundColor: C.sage,
                 color: C.white,
-                fontFamily: "'Calibri', sans-serif",
+                fontFamily: "'Gambarino', 'Georgia', serif",
                 fontSize: '1rem',
                 border: 'none',
                 opacity: isCreating ? 0.7 : 1,
@@ -161,7 +161,7 @@ export default function PresenterPage() {
               style={{
                 backgroundColor: 'transparent',
                 color: C.warmGray,
-                fontFamily: "'Consolas', monospace",
+                fontFamily: "'Gambarino', 'Georgia', serif",
                 fontSize: '0.75rem',
                 border: `1px solid ${C.warmGray}30`,
               }}
@@ -193,7 +193,7 @@ export default function PresenterPage() {
                 <p
                   className="mt-3"
                   style={{
-                    fontFamily: "'Consolas', monospace",
+                    fontFamily: "'Gambarino', 'Georgia', serif",
                     fontSize: '0.65rem',
                     color: C.sage,
                   }}
@@ -203,7 +203,7 @@ export default function PresenterPage() {
                 <p
                   className="mt-1"
                   style={{
-                    fontFamily: "'Calibri', sans-serif",
+                    fontFamily: "'Gambarino', 'Georgia', serif",
                     fontSize: '0.8rem',
                     color: C.warmGray,
                   }}
@@ -216,7 +216,7 @@ export default function PresenterPage() {
                   style={{
                     backgroundColor: C.sage,
                     color: C.white,
-                    fontFamily: "'Calibri', sans-serif",
+                    fontFamily: "'Gambarino', 'Georgia', serif",
                     fontSize: '0.85rem',
                     border: 'none',
                   }}
@@ -267,7 +267,7 @@ export default function PresenterPage() {
         {/* Slide counter */}
         <span
           style={{
-            fontFamily: "'Consolas', monospace",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '0.6rem',
             color: C.warmGray,
           }}
@@ -290,7 +290,7 @@ export default function PresenterPage() {
         {sessionId && (
           <span
             style={{
-              fontFamily: "'Consolas', monospace",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '0.55rem',
               color: C.sage,
             }}
@@ -305,7 +305,7 @@ export default function PresenterPage() {
             className="px-2 py-0.5 rounded-full"
             style={{
               backgroundColor: C.sage + '30',
-              fontFamily: "'Consolas', monospace",
+              fontFamily: "'Gambarino', 'Georgia', serif",
               fontSize: '0.55rem',
               color: C.sage,
             }}
@@ -319,7 +319,7 @@ export default function PresenterPage() {
           onClick={goPrev}
           disabled={currentSlide === 0}
           className="px-2 py-1 rounded text-xs disabled:opacity-30"
-          style={{ color: C.warmGray, fontFamily: "'Consolas', monospace", fontSize: '0.6rem' }}
+          style={{ color: C.warmGray, fontFamily: "'Gambarino', 'Georgia', serif", fontSize: '0.6rem' }}
         >
           ←
         </button>
@@ -327,7 +327,7 @@ export default function PresenterPage() {
           onClick={goNext}
           disabled={currentSlide === totalSlides - 1}
           className="px-2 py-1 rounded text-xs disabled:opacity-30"
-          style={{ color: C.warmGray, fontFamily: "'Consolas', monospace", fontSize: '0.6rem' }}
+          style={{ color: C.warmGray, fontFamily: "'Gambarino', 'Georgia', serif", fontSize: '0.6rem' }}
         >
           →
         </button>
@@ -335,7 +335,7 @@ export default function PresenterPage() {
         {/* Keyboard hint */}
         <span
           style={{
-            fontFamily: "'Consolas', monospace",
+            fontFamily: "'Gambarino', 'Georgia', serif",
             fontSize: '0.5rem',
             color: '#444',
           }}

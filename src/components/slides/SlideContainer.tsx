@@ -1,7 +1,7 @@
 // SlideContainer.tsx — 16:9 aspect ratio wrapper with transitions
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactNode } from 'react';
-import { C, BG_COLORS } from '../../lib/design-system';
+import { C, F, BG_COLORS } from '../../lib/design-system';
 import type { BgMode } from '../../types/design';
 
 export type TransitionStyle = 'fade' | 'slide' | 'scale' | 'dramatic';
@@ -96,14 +96,13 @@ export default function SlideContainer({
 export function Pill({ text, dark = false }: { text: string; dark?: boolean }) {
   return (
     <div
-      className="inline-block px-3 py-1 rounded-full"
+      className="inline-block px-4 py-1.5 rounded-full"
       style={{
-        backgroundColor: dark ? C.tagBgDark : C.tagBg,
-        fontFamily: "'Consolas', 'Monaco', monospace",
-        fontSize: '0.65rem',
-        letterSpacing: '0.12em',
-        color: dark ? C.sage : C.accentOlive,
-        textTransform: 'uppercase',
+        backgroundColor: dark ? 'rgba(255,255,255,0.15)' : C.creamDark,
+        fontFamily: F.body,
+        fontSize: 'clamp(0.6rem, 0.9vw, 0.75rem)',
+        letterSpacing: '0.08em',
+        color: dark ? C.white : C.olive,
       }}
     >
       {text}
@@ -116,9 +115,9 @@ export function SlideNumber({ num, light = false }: { num: number; light?: boole
     <div
       className="absolute bottom-4 right-6"
       style={{
-        fontFamily: "'Consolas', 'Monaco', monospace",
+        fontFamily: F.body,
         fontSize: '0.6rem',
-        color: light ? C.warmGray : C.lightGray,
+        color: light ? 'rgba(255,255,255,0.4)' : C.lightGray,
       }}
     >
       {num}
@@ -131,12 +130,11 @@ export function SectionNumber({ num, dark = false }: { num: string; dark?: boole
     <div
       className="absolute top-4 right-12"
       style={{
-        fontFamily: "'Georgia', 'Times New Roman', serif",
-        fontSize: '5rem',
-        fontWeight: 'bold',
-        color: dark ? '#3D3D3D' : C.sageLight,
+        fontFamily: F.title,
+        fontSize: 'clamp(3rem, 5vw, 5rem)',
+        fontWeight: 400,
+        color: dark ? 'rgba(255,255,255,0.15)' : C.creamDark,
         lineHeight: 1,
-        opacity: 0.8,
       }}
     >
       {num}
@@ -146,7 +144,7 @@ export function SectionNumber({ num, dark = false }: { num: string; dark?: boole
 
 export function ContentCard({
   children,
-  color = C.sagePale,
+  color = C.creamDark,
   className = '',
   style = {},
 }: {
@@ -157,7 +155,7 @@ export function ContentCard({
 }) {
   return (
     <div
-      className={`rounded-lg ${className}`}
+      className={`rounded-xl ${className}`}
       style={{ backgroundColor: color, ...style }}
     >
       {children}

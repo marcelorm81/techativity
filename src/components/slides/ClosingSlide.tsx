@@ -1,21 +1,20 @@
+// ClosingSlide.tsx — Thank you / closing with organic shapes
 import { motion } from 'framer-motion';
-import { C } from '../../lib/design-system';
-import MorphingShape from '../common/MorphingShape';
-import { SLIDE_SHAPES, SHAPES } from '../../lib/organic-shapes';
+import { C, F } from '../../lib/design-system';
+import { StaticOrganicShape } from '../common/MorphingShape';
+import { SHAPES } from '../../lib/organic-shapes';
 import type { ClosingSlide as ClosingSlideData } from '../../data/slides-data';
 
 export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
-  const [shape1, shape2] = SLIDE_SHAPES.closing;
-
   return (
-    <div className="absolute inset-0 flex">
+    <div className="absolute inset-0 flex overflow-hidden">
       {/* Left: organic shapes + thank you */}
       <div className="relative w-[45%] h-full overflow-hidden">
-        {/* Primary shape — morphs man → bird */}
-        <MorphingShape
-          shapes={[shape1, SHAPES.bird]}
-          fill={C.sage}
-          morphDuration={12}
+        {/* Primary shape */}
+        <StaticOrganicShape
+          shape={SHAPES.bird}
+          fill={C.olive}
+          opacity={0.2}
           floatAmp={4}
           floatDuration={9}
           style={{
@@ -25,31 +24,30 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
             height: '110%',
           }}
         />
-        {/* Secondary shape — morphs sun → mountain */}
-        <MorphingShape
-          shapes={[shape2, SHAPES.mountain]}
-          fill={C.sageDark}
-          opacity={0.4}
-          morphDuration={14}
+        {/* Secondary shape */}
+        <StaticOrganicShape
+          shape={SHAPES.sun}
+          fill={C.olive}
+          opacity={0.1}
           floatAmp={4}
           floatDuration={12}
           phase={0.4}
           style={{
-            left: '-8%',
-            top: '-5%',
-            width: '110%',
-            height: '110%',
+            left: '10%',
+            top: '15%',
+            width: '80%',
+            height: '80%',
           }}
         />
 
         <div className="absolute inset-0 flex flex-col justify-center pl-[15%]">
           <motion.h1
             style={{
-              fontFamily: "'Georgia', serif",
-              fontSize: 'clamp(2.5rem, 4vw, 3.2rem)',
-              fontWeight: 'bold',
-              color: C.accentOlive,
-              lineHeight: 0.92,
+              fontFamily: F.title,
+              fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+              fontWeight: 400,
+              color: C.olive,
+              lineHeight: 0.95,
               whiteSpace: 'pre-line',
             }}
             initial={{ opacity: 0, y: 20 }}
@@ -62,14 +60,15 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
           <motion.p
             className="mt-auto mb-[12%]"
             style={{
-              fontFamily: "'Calibri', sans-serif",
-              fontSize: '0.65rem',
-              color: C.accentOlive,
+              fontFamily: F.body,
+              fontSize: 'clamp(0.6rem, 0.85vw, 0.72rem)',
+              color: C.olive,
+              opacity: 0.5,
               lineHeight: 1.6,
               whiteSpace: 'pre-line',
             }}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 0.5 }}
             transition={{ delay: 0.7 }}
           >
             {slide.footer}
@@ -81,8 +80,8 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
       <div className="flex-1 flex flex-col justify-center px-[8%]">
         <motion.p
           style={{
-            fontFamily: "'Georgia', serif",
-            fontSize: 'clamp(1rem, 1.5vw, 1.15rem)',
+            fontFamily: F.title,
+            fontSize: 'clamp(1rem, 1.8vw, 1.3rem)',
             color: C.white,
             fontStyle: 'italic',
           }}
@@ -94,11 +93,11 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
         </motion.p>
 
         <motion.p
-          className="mt-4"
+          className="mt-5"
           style={{
-            fontFamily: "'Calibri', sans-serif",
-            fontSize: 'clamp(0.75rem, 1.1vw, 0.9rem)',
-            color: C.warmGray,
+            fontFamily: F.body,
+            fontSize: 'clamp(0.8rem, 1.2vw, 1rem)',
+            color: 'rgba(255,255,255,0.6)',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
