@@ -35,7 +35,7 @@ export function useBlobLayout(
       engineRef.current = new BlobLayoutEngine({
         width: options.width,
         height: options.height,
-        padding: options.padding ?? 15,
+        padding: options.padding ?? 6,
         maxRadius: options.maxRadius ?? 85,
         minRadius: options.minRadius ?? 30,
       });

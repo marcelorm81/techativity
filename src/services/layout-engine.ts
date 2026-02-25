@@ -44,14 +44,37 @@ const DEFAULT_CONFIG: LayoutConfig = {
 };
 
 // ─── Radius scaling ──────────────────────────────────────────────────
-// First blob is large; all shrink as more arrive
+// 5 size tiers create visual variety. Blobs only reach min-radius at ~18 items.
 
+const SIZE_TIERS = [1.0, 0.86, 0.74, 0.64, 0.54];
+
+/**
+ * Compute an array of radii for `n` blobs, each assigned to one of 5 tiers.
+ * The base radius scales gently so the current min-radius only appears at ~18 blobs.
+ */
+export function computeRadii(n: number, config: LayoutConfig = DEFAULT_CONFIG): number[] {
+  if (n <= 0) return [];
+  if (n === 1) return [config.maxRadius];
+
+  // Gentle linear interpolation: full maxRadius at n=1, target floor at n=18
+  const targetFloor = config.minRadius * 1.85;
+  const t = Math.min(1, (n - 1) / 17);
+  const baseRadius = config.maxRadius - (config.maxRadius - targetFloor) * t;
+
+  const radii: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const tier = SIZE_TIERS[i % SIZE_TIERS.length];
+    const r = baseRadius * tier;
+    radii.push(Math.max(config.minRadius, Math.min(config.maxRadius, r)));
+  }
+  return radii;
+}
+
+/** Legacy single-radius helper (returns the average tier radius) */
 export function computeRadius(n: number, config: LayoutConfig = DEFAULT_CONFIG): number {
   if (n <= 0) return config.maxRadius;
-  if (n === 1) return config.maxRadius;
-  // Inverse sqrt scaling: r = maxR / sqrt(n), clamped
-  const r = config.maxRadius / Math.sqrt(n);
-  return Math.max(config.minRadius, Math.min(config.maxRadius, r));
+  const radii = computeRadii(n, config);
+  return radii[0]; // largest tier
 }
 
 // ─── Optimal target positions ────────────────────────────────────────
@@ -134,7 +157,7 @@ function simulateStep(nodes: BlobNode[], config: LayoutConfig): void {
       const ddx = a.x - b.x;
       const ddy = a.y - b.y;
       const dist = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
-      const minDist = a.radius + b.radius + 4; // small gap
+      const minDist = a.radius + b.radius + 1; // tight gap
 
       if (dist < minDist) {
         const overlap = (minDist - dist) / dist;
@@ -191,22 +214,27 @@ export class BlobLayoutEngine {
     if (this.nodes.has(id)) return this.nodes;
 
     const n = this.nodes.size + 1;
-    const radius = computeRadius(n, this.config);
+    const radii = computeRadii(n, this.config);
 
-    // Update all existing blob radii
-    for (const node of this.nodes.values()) {
-      node.radius = radius;
-    }
+    // Update all existing blob radii with new tiered sizes
+    const existingIds = Array.from(this.nodes.keys());
+    existingIds.forEach((existingId, i) => {
+      const node = this.nodes.get(existingId)!;
+      node.radius = radii[i];
+    });
+
+    // New blob gets the last radius in the array
+    const newRadius = radii[n - 1];
 
     // Spawn new blob from edge
-    const spawn = randomEdgePosition(this.config, radius, seed);
+    const spawn = randomEdgePosition(this.config, newRadius, seed);
     const newNode: BlobNode = {
       id,
       x: spawn.x,
       y: spawn.y,
       vx: 0,
       vy: 0,
-      radius,
+      radius: newRadius,
       targetX: spawn.x,
       targetY: spawn.y,
     };
@@ -225,19 +253,20 @@ export class BlobLayoutEngine {
     const n = ids.length;
     if (n === 0) return;
 
-    const radius = computeRadius(n, this.config);
+    const radii = computeRadii(n, this.config);
+    const maxR = Math.max(...radii);
     const cx = this.config.width / 2;
     const cy = this.config.height / 2;
 
     const targets = goldenAngleTargets(
-      n, cx, cy, radius,
+      n, cx, cy, maxR,
       this.config.width, this.config.height,
       this.config.padding
     );
 
     ids.forEach((id, i) => {
       const node = this.nodes.get(id)!;
-      node.radius = radius;
+      node.radius = radii[i];
       node.targetX = targets[i].x;
       node.targetY = targets[i].y;
     });
