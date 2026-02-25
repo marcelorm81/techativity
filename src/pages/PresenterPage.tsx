@@ -6,9 +6,11 @@ import { useAnswerSubscription } from '../hooks/useAnswerSubscription';
 import { usePresenterSession } from '../hooks/usePresenterSession';
 import SlideRenderer from '../components/slides/SlideRenderer';
 import TechativityLogo from '../components/TechativityLogo';
+import { StaticOrganicShape } from '../components/common/MorphingShape';
+import { SHAPES } from '../lib/organic-shapes';
 import { SLIDES } from '../data/slides-data';
 import { QRCodeSVG } from 'qrcode.react';
-import { C } from '../lib/design-system';
+import { C, F } from '../lib/design-system';
 
 // Determine which question slides map to which question key
 function getQuestionKeyForSlide(slideIndex: number): 'q1' | 'q2' | 'q3' | null {
@@ -113,116 +115,143 @@ export default function PresenterPage() {
   if (showSetup) {
     return (
       <div
-        className="h-screen w-screen flex items-center justify-center"
-        style={{ backgroundColor: C.darkBg }}
+        className="h-screen w-screen flex items-center justify-center overflow-hidden"
+        style={{ backgroundColor: C.darkBg, position: 'relative' }}
       >
+        {/* Background organic shapes — subtle, low opacity */}
+        <StaticOrganicShape shape={SHAPES.cloud} fill={C.white} opacity={0.04} floatAmp={6} floatDuration={12}
+          style={{ left: '-8%', top: '-10%', width: '35%', height: '50%' }} />
+        <StaticOrganicShape shape={SHAPES.sunBlob} fill={C.white} opacity={0.04} floatAmp={5} floatDuration={14} phase={0.3}
+          style={{ right: '-6%', top: '-5%', width: '30%', height: '45%' }} />
+        <StaticOrganicShape shape={SHAPES.bird} fill={C.white} opacity={0.035} floatAmp={4} floatDuration={11} phase={0.6}
+          style={{ left: '-5%', bottom: '-12%', width: '28%', height: '40%' }} />
+        <StaticOrganicShape shape={SHAPES.mountain} fill={C.white} opacity={0.035} floatAmp={5} floatDuration={13} phase={0.8}
+          style={{ right: '-4%', bottom: '-8%', width: '25%', height: '35%' }} />
+        <StaticOrganicShape shape={SHAPES.man} fill={C.white} opacity={0.025} floatAmp={3} floatDuration={15} phase={0.5}
+          style={{ left: '30%', top: '-15%', width: '40%', height: '35%' }} />
+
+        {/* Main content — centered */}
         <motion.div
-          className="flex flex-col items-center max-w-md text-center"
+          className="flex flex-col items-center text-center relative"
+          style={{ zIndex: 1, width: '100%', maxWidth: '75vw' }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
+          {/* Large TECHATIVITY SVG wordmark */}
           <TechativityLogo
-            color={C.sage}
-            width="320px"
-            className="mb-2"
+            color={C.white}
+            width="100%"
+            className="mb-8"
           />
-          <p
-            style={{
-              fontFamily: "'Gambarino', 'Georgia', serif",
-              fontSize: '0.9rem',
-              color: C.warmGray,
-            }}
-          >
-            Live interactive presentation
-          </p>
 
-          <div className="flex flex-col gap-3 mt-8 w-full">
-            <motion.button
-              onClick={handleStart}
-              disabled={isCreating}
-              className="w-full py-3 rounded-xl font-semibold"
-              style={{
-                backgroundColor: C.sage,
-                color: C.white,
-                fontFamily: "'Gambarino', 'Georgia', serif",
-                fontSize: '1rem',
-                border: 'none',
-                opacity: isCreating ? 0.7 : 1,
-              }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {isCreating ? 'Creating session…' : 'Start Live Session'}
-            </motion.button>
-
-            <button
-              onClick={handleSkipSetup}
-              className="py-2 rounded-lg"
-              style={{
-                backgroundColor: 'transparent',
-                color: C.warmGray,
-                fontFamily: "'Gambarino', 'Georgia', serif",
-                fontSize: '0.75rem',
-                border: `1px solid ${C.warmGray}30`,
-              }}
-            >
-              Present offline (no Q&A)
-            </button>
-          </div>
-
-          {/* QR code if session created */}
-          <AnimatePresence>
-            {sessionId && (
+          {/* Buttons below — matching Figma */}
+          <AnimatePresence mode="wait">
+            {!sessionId ? (
               <motion.div
-                className="mt-8 flex flex-col items-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                key="start-buttons"
+                className="flex flex-col items-center gap-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
               >
-                <div
-                  className="p-4 rounded-2xl"
-                  style={{ backgroundColor: C.white }}
-                >
-                  <QRCodeSVG
-                    value={joinUrl}
-                    size={180}
-                    bgColor={C.white}
-                    fgColor={C.black}
-                    level="M"
-                  />
-                </div>
-                <p
-                  className="mt-3"
+                <motion.button
+                  onClick={handleStart}
+                  disabled={isCreating}
+                  className="px-10 py-3 rounded-full"
                   style={{
-                    fontFamily: "'Gambarino', 'Georgia', serif",
-                    fontSize: '0.65rem',
-                    color: C.sage,
-                  }}
-                >
-                  Session: {sessionId}
-                </p>
-                <p
-                  className="mt-1"
-                  style={{
-                    fontFamily: "'Gambarino', 'Georgia', serif",
-                    fontSize: '0.8rem',
-                    color: C.warmGray,
-                  }}
-                >
-                  {participantCount} participant{participantCount !== 1 ? 's' : ''} joined
-                </p>
-                <button
-                  onClick={() => setShowSetup(false)}
-                  className="mt-4 px-6 py-2 rounded-lg font-semibold"
-                  style={{
-                    backgroundColor: C.sage,
+                    backgroundColor: 'transparent',
                     color: C.white,
-                    fontFamily: "'Gambarino', 'Georgia', serif",
-                    fontSize: '0.85rem',
-                    border: 'none',
+                    fontFamily: F.title,
+                    fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                    border: `1.5px solid rgba(255,255,255,0.5)`,
+                    cursor: isCreating ? 'wait' : 'pointer',
+                    opacity: isCreating ? 0.7 : 1,
                   }}
+                  whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.8)' }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {isCreating ? 'Creating session…' : 'Start Live session'}
+                </motion.button>
+
+                <motion.button
+                  onClick={handleSkipSetup}
+                  className="px-6 py-2"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'rgba(255,255,255,0.45)',
+                    fontFamily: F.title,
+                    fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                  whileHover={{ color: 'rgba(255,255,255,0.7)' }}
+                >
+                  Present Offline (no Q&A)
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="session-info"
+                className="flex flex-col items-center"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex items-end gap-5">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="p-3 rounded-2xl"
+                      style={{ backgroundColor: C.white }}
+                    >
+                      <QRCodeSVG
+                        value={joinUrl}
+                        size={140}
+                        bgColor={C.white}
+                        fgColor={C.olive}
+                        level="M"
+                      />
+                    </div>
+                    <p
+                      className="mt-2"
+                      style={{
+                        fontFamily: F.title,
+                        fontSize: 'clamp(0.7rem, 0.9vw, 0.85rem)',
+                        color: 'rgba(255,255,255,0.5)',
+                      }}
+                    >
+                      Session: {sessionId}
+                    </p>
+                    <p
+                      className="mt-1"
+                      style={{
+                        fontFamily: F.title,
+                        fontSize: 'clamp(0.8rem, 1vw, 0.95rem)',
+                        color: 'rgba(255,255,255,0.6)',
+                      }}
+                    >
+                      {participantCount} participant{participantCount !== 1 ? 's' : ''} joined
+                    </p>
+                  </div>
+                </div>
+
+                <motion.button
+                  onClick={() => setShowSetup(false)}
+                  className="mt-5 px-10 py-3 rounded-full"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: C.white,
+                    fontFamily: F.title,
+                    fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
+                    border: `1.5px solid rgba(255,255,255,0.5)`,
+                    cursor: 'pointer',
+                  }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   Begin presentation
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
