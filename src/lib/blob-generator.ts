@@ -261,7 +261,7 @@ export function pebblePath(
 
 // ─── Shape theme selector ───────────────────────────────────────────
 
-export type QuestionTheme = 'identity' | 'reality' | 'meaning';
+export type QuestionTheme = 'identity' | 'reality' | 'meaning' | 'clarity';
 
 /** Generate a themed shape path for a Q&A answer blob */
 export function themedShapePath(
@@ -290,6 +290,10 @@ export function themedShapePath(
       const h = size * (0.9 + rng() * 0.3);
       const angle = (rng() - 0.5) * 40; // -20° to +20°
       return leafPath(cx, cy, w, h, { seed, angle });
+    }
+    case 'clarity': {
+      // Organic blob — grounded, clear
+      return { path: blobPath(cx, cy, size * 0.85, { seed, points: 8, wobble: 0.25 }) };
     }
   }
 }

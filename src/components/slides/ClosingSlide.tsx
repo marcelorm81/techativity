@@ -24,14 +24,14 @@ export default function ClosingSlide({ slide }: { slide: ClosingSlideData }) {
             height: '110%',
           }}
         />
-        {/* Secondary shape */}
+        {/* Secondary bird shape — overlapping, different scale */}
         <StaticOrganicShape
-          shape={SHAPES.sun}
+          shape={SHAPES.bird}
           fill={C.white}
-          opacity={0.07}
-          floatAmp={4}
-          floatDuration={12}
-          phase={0.4}
+          opacity={0.05}
+          floatAmp={3}
+          floatDuration={13}
+          phase={0.5}
           style={{
             left: '10%',
             top: '15%',

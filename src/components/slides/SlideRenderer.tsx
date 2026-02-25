@@ -24,6 +24,7 @@ interface SlideRendererProps {
     q1: Answer[];
     q2: Answer[];
     q3: Answer[];
+    q4: Answer[];
   };
   sessionInfo?: SessionInfo | null;
 }
@@ -66,7 +67,7 @@ export default function SlideRenderer({
       case 'question':
         return <QuestionSlide slide={slide} />;
       case 'answers': {
-        const qKey = `q${slide.questionNumber}` as 'q1' | 'q2' | 'q3';
+        const qKey = `q${slide.questionNumber}` as 'q1' | 'q2' | 'q3' | 'q4';
         return (
           <AnswersSlide
             slide={slide}

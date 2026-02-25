@@ -14,12 +14,13 @@ export interface Answer {
   seed: number;
 }
 
-export type QuestionKey = 'q1' | 'q2' | 'q3';
+export type QuestionKey = 'q1' | 'q2' | 'q3' | 'q4';
 
 interface AnswerState {
   q1: Answer[];
   q2: Answer[];
   q3: Answer[];
+  q4: Answer[];
 }
 
 function toAnswers(data: Record<string, AnswerData>): Answer[] {
@@ -37,6 +38,7 @@ export function useAnswerSubscription(sessionId?: string) {
     q1: [],
     q2: [],
     q3: [],
+    q4: [],
   });
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function useAnswerSubscription(sessionId?: string) {
 
     const unsubs: (() => void)[] = [];
 
-    for (const q of ['q1', 'q2', 'q3'] as const) {
+    for (const q of ['q1', 'q2', 'q3', 'q4'] as const) {
       const unsub = subscribeToAnswers(sessionId, q, (data) => {
         setAnswers((prev) => ({
           ...prev,

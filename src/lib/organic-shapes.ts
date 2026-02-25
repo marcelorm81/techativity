@@ -135,6 +135,7 @@ export const ANSWER_SHAPES: Record<string, OrganicShape[]> = {
   identity: [SHAPES.cloud, SHAPES.sunBlob],
   reality: [SHAPES.sunBlob, SHAPES.cloud],
   meaning: [SHAPES.cloud, SHAPES.sunBlob],
+  clarity: [SHAPES.cloud, SHAPES.sunBlob],
 };
 
 /** Shape cycle order for morphing animations */

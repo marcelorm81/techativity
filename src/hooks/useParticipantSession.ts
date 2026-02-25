@@ -23,7 +23,7 @@ export function useParticipantSession(sessionId: string | null) {
   const [participantName, setParticipantName] = useState('');
   const [participantRole, setParticipantRole] = useState('');
   const [activeQuestion, setActiveQuestion] = useState<
-    'none' | 'q1' | 'q2' | 'q3'
+    'none' | 'q1' | 'q2' | 'q3' | 'q4'
   >('none');
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
     new Set()
@@ -61,7 +61,7 @@ export function useParticipantSession(sessionId: string | null) {
     if (!participantId) return;
 
     if (activeQuestion === 'none') {
-      if (answeredQuestions.size >= 3) {
+      if (answeredQuestions.size >= 4) {
         setState('complete');
       } else {
         setState('waiting');

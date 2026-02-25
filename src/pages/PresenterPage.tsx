@@ -13,18 +13,21 @@ import { QRCodeSVG } from 'qrcode.react';
 import { C, F } from '../lib/design-system';
 
 // Determine which question slides map to which question key
-function getQuestionKeyForSlide(slideIndex: number): 'q1' | 'q2' | 'q3' | null {
+function getQuestionKeyForSlide(slideIndex: number): 'q1' | 'q2' | 'q3' | 'q4' | null {
   const slide = SLIDES[slideIndex];
   if (!slide) return null;
   // Question activation on the question slide itself
   if (slide.type === 'question') {
     const qNum = (slide as any).questionNumber;
-    if (qNum >= 1 && qNum <= 3) return `q${qNum}` as 'q1' | 'q2' | 'q3';
+    if (qNum >= 1 && qNum <= 4) return `q${qNum}` as 'q1' | 'q2' | 'q3' | 'q4';
+    // Q4 doesn't have questionNumber, use theme to detect it
+    const theme = (slide as any).theme;
+    if (theme === 'clarity') return 'q4';
   }
   // Also activate on the answers slide
   if (slide.type === 'answers') {
     const qNum = (slide as any).questionNumber;
-    if (qNum >= 1 && qNum <= 3) return `q${qNum}` as 'q1' | 'q2' | 'q3';
+    if (qNum >= 1 && qNum <= 4) return `q${qNum}` as 'q1' | 'q2' | 'q3' | 'q4';
   }
   return null;
 }
@@ -44,7 +47,7 @@ export default function PresenterPage() {
   const { answers, addTestAnswer } = useAnswerSubscription(sessionId ?? undefined);
 
   const [showSetup, setShowSetup] = useState(true);
-  const [activeQ, setActiveQ] = useState<'none' | 'q1' | 'q2' | 'q3'>('none');
+  const [activeQ, setActiveQ] = useState<'none' | 'q1' | 'q2' | 'q3' | 'q4'>('none');
 
   // Build join URL
   const joinUrl = useMemo(() => {

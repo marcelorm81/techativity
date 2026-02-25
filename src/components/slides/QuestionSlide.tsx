@@ -1,35 +1,65 @@
-// QuestionSlide.tsx — Centered question with small decorative shape icon
-import { motion } from 'framer-motion';
+// QuestionSlide.tsx — Centered question with animated cycling shape icon
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { C, F } from '../../lib/design-system';
-import { StaticOrganicShape } from '../common/MorphingShape';
 import { SHAPES } from '../../lib/organic-shapes';
 import type { QuestionSlide as QuestionSlideData } from '../../data/slides-data';
 
+const CYCLE_SHAPES = [SHAPES.bird, SHAPES.man, SHAPES.mountain, SHAPES.sun];
+const CYCLE_INTERVAL = 2500;
+
 export default function QuestionSlide({ slide }: { slide: QuestionSlideData }) {
+  const [shapeIndex, setShapeIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setShapeIndex((i) => (i + 1) % CYCLE_SHAPES.length);
+    }, CYCLE_INTERVAL);
+    return () => clearInterval(id);
+  }, []);
+
   // Strip Q number prefix if present
   const questionText = slide.question.replace(/^Q\d\s*/, '');
+  const currentShape = CYCLE_SHAPES[shapeIndex];
 
   return (
     <div className="absolute inset-0 overflow-hidden flex flex-col items-center justify-center">
-      {/* Small decorative shape icon above question */}
+      {/* Animated cycling shape icon above question */}
       <motion.div
-        className="mb-8"
+        className="mb-8 relative"
+        style={{
+          width: 'clamp(90px, 12vw, 160px)',
+          height: 'clamp(90px, 12vw, 160px)',
+        }}
         initial={{ opacity: 0, scale: 0.7 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.15, type: 'spring', stiffness: 200, damping: 15 }}
       >
-        <StaticOrganicShape
-          shape={SHAPES.sun}
-          fill={C.olive}
-          opacity={0.25}
-          floatAmp={3}
-          floatDuration={7}
-          style={{
-            position: 'relative',
-            width: 'clamp(90px, 12vw, 160px)',
-            height: 'clamp(90px, 12vw, 160px)',
-          }}
-        />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={shapeIndex}
+            className="absolute inset-0"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <svg
+              viewBox={currentShape.viewBox}
+              className="w-full h-full"
+              preserveAspectRatio="xMidYMid meet"
+              style={{ overflow: 'visible' }}
+            >
+              <path
+                d={currentShape.d}
+                fill={C.olive}
+                opacity={0.25}
+                fillRule={currentShape.fillRule}
+                clipRule={currentShape.clipRule}
+              />
+            </svg>
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
       {/* Question text — centered, large Gambarino */}

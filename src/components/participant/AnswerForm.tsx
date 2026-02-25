@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { C } from '../../lib/design-system';
 
 interface AnswerFormProps {
-  question: 'q1' | 'q2' | 'q3';
+  question: 'q1' | 'q2' | 'q3' | 'q4';
   onSubmit: (text: string) => void;
   name: string;
 }
@@ -24,6 +24,11 @@ const QUESTION_TEXT: Record<string, { label: string; prompt: string; placeholder
     label: 'Q3 — Meaning',
     prompt: "At the end of a really good week, what makes you feel 'that was good work'?",
     placeholder: 'What makes it worth it…',
+  },
+  q4: {
+    label: 'Q4 — Clarity',
+    prompt: "Think about a recent project. What was one moment where something didn't make sense, but you didn't push on it?",
+    placeholder: 'What stopped you from asking why…',
   },
 };
 

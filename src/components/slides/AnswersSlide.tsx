@@ -19,6 +19,7 @@ const THEME_FILLS: Record<QuestionTheme, string[]> = {
   identity: [C.olive, C.oliveLight, C.oliveDark, '#6B8236', '#4A5B22'],
   reality: [C.olive, '#7A9240', C.oliveDark, C.oliveLight, '#5C7228'],
   meaning: [C.oliveLight, C.olive, '#8DA650', C.oliveDark, '#6B8236'],
+  clarity: [C.olive, C.oliveLight, C.oliveDark, '#6B8236', '#4A5B22'],
 };
 
 function getFillForAnswer(theme: QuestionTheme, seed: number): string {
@@ -243,12 +244,14 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
     identity: 'Q1 \u2014 Identity',
     reality: 'Q2 \u2014 Reality',
     meaning: 'Q3 \u2014 Meaning',
+    clarity: 'Q4 \u2014 Clarity',
   };
 
   const themeQuestions: Record<QuestionTheme, string> = {
     identity: '\u201CIf you had to explain your job to a child, what would you say you do?\u201D',
     reality: '\u201CWhat do you actually spend most of your time doing in a normal week?\u201D',
     meaning: '\u201CAt the end of a really good week, what makes you feel \u2018that was good work\u2019?\u201D',
+    clarity: '\u201CThink about a recent project. What was one moment where something didn\u2019t make sense, but you didn\u2019t push on it?\u201D',
   };
 
   // Waiting placeholder shapes

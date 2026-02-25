@@ -35,15 +35,15 @@ export interface QuestionSlide extends BaseSlide {
   type: "question";
   question: string;
   notes?: string;
-  theme?: "identity" | "reality" | "meaning";
+  theme?: "identity" | "reality" | "meaning" | "clarity";
   followup?: string;
   isInteractive?: boolean;
 }
 
 export interface AnswersSlide extends BaseSlide {
   type: "answers";
-  questionNumber: 1 | 2 | 3;
-  theme: "identity" | "reality" | "meaning";
+  questionNumber: 1 | 2 | 3 | 4;
+  theme: "identity" | "reality" | "meaning" | "clarity";
 }
 
 export interface Card {
@@ -60,6 +60,7 @@ export interface ContentSlide extends BaseSlide {
   subheading?: string;
   body?: string;
   bodyItems?: string[];
+  bodySize?: 'title';
   cards?: Card[];
   columns?: {
     title: string;
@@ -67,6 +68,7 @@ export interface ContentSlide extends BaseSlide {
     note?: string;
   }[];
   note?: string;
+  noteSize?: 'normal' | 'large' | 'title';
   twoColumn?: {
     left: {
       title: string;
@@ -306,6 +308,7 @@ export const SLIDES: Slide[] = [
     heading: "AI does not\nthreaten creativity.",
     body: "AI threatens\nunquestioned execution.",
     note: "If a task can be automated, it was probably never the core of your role.",
+    noteSize: "title",
   } as ContentSlide,
 
   // Slide 16 (Index 16) - Slide 14 in presentation
@@ -370,9 +373,10 @@ export const SLIDES: Slide[] = [
     type: "content",
     bgMode: "dark",
     pill: "The deeper layer",
-    heading: "People don't work badly because they're lazy.",
-    body: "They work badly because they confuse tasks with purpose.",
+    heading: "People don't work badly because they lack talent.",
+    body: "They work badly because tasks slowly replace intention.\nWhat we do every day becomes what we think the work is.",
     note: "Systems slowly redefine identity through repetition. AI accelerates this moment of truth.",
+    noteSize: "large",
   } as ContentSlide,
 
   // Slide 19 (Index 19) - Slide 17 in presentation
@@ -384,6 +388,7 @@ export const SLIDES: Slide[] = [
     heading: "Designers, producers, developers, creatives, managers:",
     body: "Are not chasing different things.",
     note: "Everyone is chasing the same outcome: To make something that people actually like, understand, and care about.",
+    noteSize: "title",
   } as ContentSlide,
 
   // Slide 20 (Index 20) - Slide 18 in presentation
@@ -394,6 +399,7 @@ export const SLIDES: Slide[] = [
     heading: "Good work is the sum of all roles questioning together.",
     body: "When it feels like 'design decisions win', it's often because we mistake visible output for collective decision-making.",
     note: "Creativity is shared responsibility, not role hierarchy.",
+    noteSize: "title",
   } as ContentSlide,
 
   // Slide 21 (Index 21) - Slide 19 in presentation - SECTION 3
@@ -449,15 +455,15 @@ export const SLIDES: Slide[] = [
     cards: [
       {
         title: "01",
-        content: "Creative work is identity-adjacent: Ideas come from judgment and taste, not facts. Questioning the work feels like questioning the person.",
+        content: "Creative work is close to who we are.\nIdeas come from taste and judgment, not facts.\nSo when the work is questioned, it can feel like we are being questioned.",
       },
       {
         title: "02",
-        content: "Creative work is future-oriented: No objective truth yet. Higher ego sensitivity. Everything feels like opinion.",
+        content: "Creative work points to the future.\nThere's no clear right answer yet.\nEverything feels subjective, which makes feedback feel more sensitive.",
       },
       {
         title: "03",
-        content: "Culture rewards affirmation: Disagreement feels unsafe even when it's necessary. We're trained to agree.",
+        content: "Our culture favors agreement.\nWe're encouraged to be supportive and positive.\nSo disagreement can feel unsafe — even when it's necessary.",
       },
     ],
     note: "This is not weakness. It's human psychology.",
@@ -467,7 +473,7 @@ export const SLIDES: Slide[] = [
   {
     id: 25,
     type: "content",
-    bgMode: "dark",
+    bgMode: "cream",
     pill: "The danger",
     heading: "AI is optimized for yes.",
     cards: [
@@ -506,6 +512,7 @@ export const SLIDES: Slide[] = [
     heading: "Critique is not about judging people.",
     body: "Critique is about protecting the project.",
     note: "When we don't question early, the project pays later.",
+    noteSize: "title",
   } as ContentSlide,
 
   // Slide 28 (Index 28) - Slide 26 in presentation
@@ -541,6 +548,7 @@ export const SLIDES: Slide[] = [
     heading: "Normalize unfinished thinking.",
     body: "Perfectionism is often self-defense. When something feels too finished, it's harder to help.",
     note: "Anchor critique to alignment, not taste. Shift from 'Is this good or bad?' to 'Is this aligned with what we're trying to achieve?'",
+    noteSize: "title",
   } as ContentSlide,
 
   // Slide 30 (Index 30) - Slide 28 in presentation - QUESTION 4
@@ -551,8 +559,18 @@ export const SLIDES: Slide[] = [
     question: QUESTIONS.q4,
     followup: "What stopped you from asking why?",
     notes: "Fear of friction · Time pressure · Desire to be helpful · Avoidance of conflict",
-    isInteractive: false,
+    isInteractive: true,
+    theme: "clarity",
   } as QuestionSlide,
+
+  // Slide 30b — Q4 Answers
+  {
+    id: 41,
+    type: "answers",
+    bgMode: "dark",
+    questionNumber: 4,
+    theme: "clarity",
+  } as AnswersSlide,
 
   // Slide 31 (Index 31) - Slide 29 in presentation - SECTION 5
   {
@@ -560,7 +578,7 @@ export const SLIDES: Slide[] = [
     type: "section",
     bgMode: "dark",
     number: "05",
-    heading: "The\nUpgrade",
+    heading: "Shifting\nPerspective",
     body: "What roles look like when we stop executing and start questioning.",
   } as SectionSlide,
 
@@ -590,7 +608,7 @@ export const SLIDES: Slide[] = [
     id: 33,
     type: "statement",
     bgMode: "sage",
-    heading: "Stewards\nof clarity.",
+    heading: "Our role:\nChasers of\npurpose.",
     note: "That's the real job description. For all of us.",
   } as StatementSlide,
 
@@ -635,6 +653,7 @@ export const SLIDES: Slide[] = [
     bgMode: "dark",
     heading: "If AI is optimized for yes, then our human responsibility is why.",
     body: "And if we confuse kindness with agreement, we lose the tension that makes ideas strong.",
+    bodySize: "title",
   } as ContentSlide,
 
   // Slide 37 (Index 37) - Slide 35 in presentation
@@ -657,8 +676,8 @@ export const SLIDES: Slide[] = [
     id: 38,
     type: "statement",
     bgMode: "sage",
-    heading: "No fear.\nNo hype.",
-    note: "Clarity\nand permission.",
+    heading: "No fear of AI.\nNo hype of AI.\nJust a bit more clarity.\nAnd permission to use it.",
+    note: "",
   } as StatementSlide,
 
   // Slide 39 (Index 39) - Slide 37 in presentation
