@@ -36,7 +36,7 @@ export default function AnswerForm({ question, onSubmit, name }: AnswerFormProps
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const q = QUESTION_TEXT[question] || QUESTION_TEXT.q1;
-  const maxLen = 200;
+  const maxLen = 150;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

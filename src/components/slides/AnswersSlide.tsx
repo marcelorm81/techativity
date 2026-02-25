@@ -70,9 +70,10 @@ interface BlobItemProps {
   theme: QuestionTheme;
   isNew: boolean;
   index: number;
+  onClick: () => void;
 }
 
-function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) {
+function BlobItem({ answer, x, y, radius, theme, isNew, index, onClick }: BlobItemProps) {
   const shape = useMemo(
     () => getShapeForAnswer(theme, answer.seed),
     [theme, answer.seed]
@@ -83,12 +84,12 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
     [theme, answer.seed]
   );
 
-  // Text sizing based on blob radius — bigger fonts
-  const nameFontSize = Math.max(10, Math.min(18, radius * 0.2));
-  const textFontSize = Math.max(9, Math.min(15, radius * 0.16));
-  const maxWidth = radius * 1.4;
+  // Slightly smaller font to fit more text per blob
+  const nameFontSize = Math.max(9, Math.min(15, radius * 0.17));
+  const textFontSize = Math.max(8, Math.min(13, radius * 0.13));
+  const maxWidth = radius * 1.55;
   const maxCharsPerLine = Math.floor(maxWidth / (textFontSize * 0.52));
-  const maxLines = Math.min(4, Math.floor((radius * 0.8) / (textFontSize * 1.3)));
+  const maxLines = Math.min(6, Math.floor((radius * 0.9) / (textFontSize * 1.3)));
 
   // Word-wrap the answer text
   const lines = useMemo(() => {
@@ -123,13 +124,15 @@ function BlobItem({ answer, x, y, radius, theme, isNew, index }: BlobItemProps) 
 
   return (
     <motion.div
+      onClick={onClick}
       style={{
         position: 'absolute',
         left: x - radius,
         top: y - radius,
         width: radius * 2,
         height: radius * 2,
-        pointerEvents: 'none',
+        pointerEvents: 'auto',
+        cursor: 'pointer',
       }}
       initial={isNew ? { scale: 0, opacity: 0 } : false}
       animate={{
@@ -214,6 +217,7 @@ const COUNTDOWN_SECONDS = 5 * 60; // 5 minutes
 export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState({ width: 960, height: 480 });
+  const [expandedAnswer, setExpandedAnswer] = useState<Answer | null>(null);
   const { remaining, formatted, progress } = useCountdown(COUNTDOWN_SECONDS);
 
   // Measure container
@@ -420,6 +424,7 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
                   theme={slide.theme}
                   isNew={pos.isNew}
                   index={i}
+                  onClick={() => setExpandedAnswer(answer)}
                 />
               );
             })
@@ -466,6 +471,72 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
           />
         </div>
       </div>
+
+      {/* Full answer overlay — click blob to expand */}
+      <AnimatePresence>
+        {expandedAnswer && (
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              backgroundColor: 'rgba(82,100,38,0.88)',
+              backdropFilter: 'blur(8px)',
+              zIndex: 30,
+              cursor: 'pointer',
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setExpandedAnswer(null)}
+          >
+            <motion.div
+              className="mx-10 px-10 py-9 rounded-2xl"
+              style={{
+                backgroundColor: C.cream,
+                maxWidth: '38rem',
+                width: '100%',
+                cursor: 'default',
+              }}
+              initial={{ scale: 0.92, y: 16 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 16 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <p style={{
+                fontFamily: F.body,
+                fontSize: 'clamp(0.65rem, 0.9vw, 0.8rem)',
+                color: C.olive,
+                opacity: 0.45,
+                marginBottom: '0.6rem',
+                letterSpacing: '0.04em',
+              }}>
+                {expandedAnswer.name}
+              </p>
+              <p style={{
+                fontFamily: F.title,
+                fontSize: 'clamp(1.4rem, 2.2vw, 1.9rem)',
+                color: C.olive,
+                lineHeight: 1.35,
+                fontStyle: 'italic',
+                whiteSpace: 'pre-line',
+              }}>
+                {expandedAnswer.text}
+              </p>
+              <p style={{
+                fontFamily: F.body,
+                fontSize: 'clamp(0.55rem, 0.7vw, 0.65rem)',
+                color: C.olive,
+                opacity: 0.28,
+                marginTop: '1.5rem',
+                textAlign: 'center',
+              }}>
+                click anywhere to close
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

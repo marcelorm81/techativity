@@ -6,6 +6,7 @@ import JoinForm from '../components/participant/JoinForm';
 import WaitingScreen from '../components/participant/WaitingScreen';
 import AnswerForm from '../components/participant/AnswerForm';
 import ThankYou from '../components/participant/ThankYou';
+import PongGame from '../components/participant/PongGame';
 import { C } from '../lib/design-system';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -85,10 +86,7 @@ export default function ParticipantPage() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <WaitingScreen
-            name={participantName}
-            message="Answer recorded — waiting for the next question…"
-          />
+          <PongGame name={participantName} />
         </motion.div>
       )}
 

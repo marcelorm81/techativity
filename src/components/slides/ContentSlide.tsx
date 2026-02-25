@@ -94,7 +94,7 @@ function ShapeCard({
         <p
           style={{
             fontFamily: F.body,
-            fontSize: 'clamp(0.85rem, 1.3vw, 1.15rem)',
+            fontSize: 'clamp(0.72rem, 1.05vw, 0.95rem)',
             color: C.white,
             opacity: 0.9,
             lineHeight: 1.5,
