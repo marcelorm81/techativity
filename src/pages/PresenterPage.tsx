@@ -259,6 +259,7 @@ export default function PresenterPage() {
             slideIndex={currentSlide}
             direction={direction}
             answers={answers}
+            sessionInfo={sessionId ? { sessionId, joinUrl, participantCount } : null}
           />
         </div>
       </div>

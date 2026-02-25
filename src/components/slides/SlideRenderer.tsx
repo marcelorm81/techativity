@@ -10,6 +10,12 @@ import AnswersSlide from './AnswersSlide';
 import type { Slide } from '../../data/slides-data';
 import type { Answer } from '../../hooks/useAnswerSubscription';
 
+export interface SessionInfo {
+  sessionId: string;
+  joinUrl: string;
+  participantCount: number;
+}
+
 interface SlideRendererProps {
   slide: Slide;
   slideIndex: number;
@@ -19,6 +25,7 @@ interface SlideRendererProps {
     q2: Answer[];
     q3: Answer[];
   };
+  sessionInfo?: SessionInfo | null;
 }
 
 // Choose transition style based on slide type
@@ -46,11 +53,12 @@ export default function SlideRenderer({
   slideIndex,
   direction,
   answers,
+  sessionInfo,
 }: SlideRendererProps) {
   function renderSlide() {
     switch (slide.type) {
       case 'title':
-        return <TitleSlide slide={slide} />;
+        return <TitleSlide slide={slide} sessionInfo={sessionInfo} />;
       case 'section':
         return <SectionDivider slide={slide} />;
       case 'statement':

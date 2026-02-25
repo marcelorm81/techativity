@@ -4,8 +4,15 @@ import { DECORATIVE_BLOBS } from '../../lib/blob-generator';
 import OrganicBlob from '../common/OrganicBlob';
 import { Pill } from './SlideContainer';
 import type { TitleSlide as TitleSlideData } from '../../data/slides-data';
+import type { SessionInfo } from './SlideRenderer';
+import { QRCodeSVG } from 'qrcode.react';
 
-export default function TitleSlide({ slide }: { slide: TitleSlideData }) {
+interface TitleSlideProps {
+  slide: TitleSlideData;
+  sessionInfo?: SessionInfo | null;
+}
+
+export default function TitleSlide({ slide, sessionInfo }: TitleSlideProps) {
   const blobPath = DECORATIVE_BLOBS.title(600, 900);
 
   return (
@@ -82,6 +89,85 @@ export default function TitleSlide({ slide }: { slide: TitleSlideData }) {
           height: '106%',
         }}
       />
+
+      {/* Session join overlay — bottom-right corner */}
+      {sessionInfo && (
+        <motion.div
+          className="absolute flex items-end gap-4"
+          style={{
+            bottom: '5%',
+            right: '5%',
+            zIndex: 10,
+          }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.6 }}
+        >
+          {/* Text info */}
+          <div className="flex flex-col items-end">
+            <span
+              style={{
+                fontFamily: "'Consolas', monospace",
+                fontSize: 'clamp(0.5rem, 0.7vw, 0.6rem)',
+                color: C.white,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                opacity: 0.7,
+              }}
+            >
+              Join at
+            </span>
+            <span
+              style={{
+                fontFamily: "'Calibri', sans-serif",
+                fontSize: 'clamp(0.7rem, 1vw, 0.85rem)',
+                color: C.white,
+                fontWeight: 600,
+              }}
+            >
+              {window.location.host}/join
+            </span>
+            <span
+              style={{
+                fontFamily: "'Consolas', monospace",
+                fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)',
+                color: C.white,
+                fontWeight: 'bold',
+                letterSpacing: '0.15em',
+                lineHeight: 1.1,
+                marginTop: '0.2em',
+              }}
+            >
+              {sessionInfo.sessionId}
+            </span>
+            <span
+              style={{
+                fontFamily: "'Calibri', sans-serif",
+                fontSize: 'clamp(0.45rem, 0.6vw, 0.55rem)',
+                color: C.white,
+                opacity: 0.5,
+                marginTop: '0.3em',
+              }}
+            >
+              {sessionInfo.participantCount} joined
+            </span>
+          </div>
+
+          {/* QR code */}
+          <div
+            className="rounded-lg p-2"
+            style={{ backgroundColor: C.white }}
+          >
+            <QRCodeSVG
+              value={sessionInfo.joinUrl}
+              size={80}
+              bgColor={C.white}
+              fgColor={C.black}
+              level="M"
+            />
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }
