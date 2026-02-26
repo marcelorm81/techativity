@@ -49,9 +49,7 @@ export default function PresenterPage() {
 
   const [showSetup, setShowSetup] = useState(true);
   const [activeQ, setActiveQ] = useState<'none' | 'q1' | 'q2' | 'q3' | 'q4'>('none');
-  const [reviewCode, setReviewCode] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
-  const [reviewError, setReviewError] = useState(false);
 
   // Build join URL
   const joinUrl = useMemo(() => {
@@ -118,19 +116,12 @@ export default function PresenterPage() {
     setShowSetup(false);
   };
 
-  // Review a past session by code
-  const handleReview = async () => {
-    const code = reviewCode.trim().toUpperCase();
-    if (!code) return;
+  // Review last session (hardcoded to the one real session)
+  const handleReviewLast = async () => {
     setReviewLoading(true);
-    setReviewError(false);
-    const found = await loadSession(code);
+    await loadSession('5UT54V');
     setReviewLoading(false);
-    if (found) {
-      setShowSetup(false);
-    } else {
-      setReviewError(true);
-    }
+    setShowSetup(false);
   };
 
   // ── Setup screen ───────────────────────────────────────────────────
@@ -167,115 +158,73 @@ export default function PresenterPage() {
             className="mb-8"
           />
 
-          {/* Buttons below — matching Figma */}
+          {/* Buttons below */}
           <AnimatePresence mode="wait">
             {!sessionId ? (
               <motion.div
                 key="start-buttons"
-                className="flex flex-col items-center gap-3"
+                className="flex flex-col items-center gap-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ delay: 0.3, duration: 0.5 }}
               >
+                {/* Primary — Review Last Session */}
                 <motion.button
-                  onClick={handleStart}
-                  disabled={isCreating}
-                  className="px-10 py-3 rounded-full"
+                  onClick={handleReviewLast}
+                  disabled={reviewLoading}
+                  className="px-12 py-3 rounded-full"
                   style={{
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'rgba(255,255,255,0.12)',
                     color: C.white,
                     fontFamily: F.title,
                     fontSize: 'clamp(1rem, 1.5vw, 1.25rem)',
-                    border: `1.5px solid rgba(255,255,255,0.5)`,
+                    border: `1.5px solid rgba(255,255,255,0.55)`,
+                    cursor: reviewLoading ? 'wait' : 'pointer',
+                    opacity: reviewLoading ? 0.7 : 1,
+                  }}
+                  whileHover={{ scale: 1.03, backgroundColor: 'rgba(255,255,255,0.18)', borderColor: 'rgba(255,255,255,0.85)' }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  {reviewLoading ? 'Loading session…' : 'Review Last Session'}
+                </motion.button>
+
+                {/* Secondary — Start Live Session */}
+                <motion.button
+                  onClick={handleStart}
+                  disabled={isCreating}
+                  className="px-8 py-2 rounded-full"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'rgba(255,255,255,0.55)',
+                    fontFamily: F.title,
+                    fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)',
+                    border: `1px solid rgba(255,255,255,0.25)`,
                     cursor: isCreating ? 'wait' : 'pointer',
                     opacity: isCreating ? 0.7 : 1,
                   }}
-                  whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.8)' }}
+                  whileHover={{ color: 'rgba(255,255,255,0.85)', borderColor: 'rgba(255,255,255,0.5)' }}
                   whileTap={{ scale: 0.97 }}
                 >
-                  {isCreating ? 'Creating session…' : 'Start Live session'}
+                  {isCreating ? 'Creating session…' : 'Start Live Session'}
                 </motion.button>
 
+                {/* Tertiary — Present Offline */}
                 <motion.button
                   onClick={handleSkipSetup}
                   className="px-6 py-2"
                   style={{
                     backgroundColor: 'transparent',
-                    color: 'rgba(255,255,255,0.45)',
+                    color: 'rgba(255,255,255,0.28)',
                     fontFamily: F.title,
-                    fontSize: 'clamp(0.8rem, 1.1vw, 0.95rem)',
+                    fontSize: 'clamp(0.7rem, 0.95vw, 0.82rem)',
                     border: 'none',
                     cursor: 'pointer',
                   }}
-                  whileHover={{ color: 'rgba(255,255,255,0.7)' }}
+                  whileHover={{ color: 'rgba(255,255,255,0.5)' }}
                 >
                   Present Offline (no Q&A)
                 </motion.button>
-
-                {/* Review past session */}
-                <div className="flex flex-col items-center mt-6" style={{ gap: '0.5rem' }}>
-                  <p style={{
-                    fontFamily: F.body,
-                    fontSize: 'clamp(0.65rem, 0.85vw, 0.75rem)',
-                    color: 'rgba(255,255,255,0.28)',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                  }}>
-                    Review past session
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={reviewCode}
-                      onChange={e => { setReviewCode(e.target.value.toUpperCase()); setReviewError(false); }}
-                      onKeyDown={e => e.key === 'Enter' && handleReview()}
-                      placeholder="SESSION CODE"
-                      maxLength={6}
-                      style={{
-                        fontFamily: F.title,
-                        fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
-                        background: 'rgba(255,255,255,0.07)',
-                        border: reviewError ? '1.5px solid rgba(255,100,100,0.5)' : '1.5px solid rgba(255,255,255,0.18)',
-                        borderRadius: '0.5rem',
-                        color: C.white,
-                        padding: '0.4rem 0.75rem',
-                        width: '9rem',
-                        letterSpacing: '0.12em',
-                        outline: 'none',
-                        textAlign: 'center',
-                      }}
-                    />
-                    <motion.button
-                      onClick={handleReview}
-                      disabled={reviewLoading || reviewCode.trim().length === 0}
-                      style={{
-                        fontFamily: F.title,
-                        fontSize: 'clamp(0.75rem, 0.95vw, 0.85rem)',
-                        background: 'rgba(255,255,255,0.1)',
-                        border: '1.5px solid rgba(255,255,255,0.22)',
-                        borderRadius: '0.5rem',
-                        color: 'rgba(255,255,255,0.7)',
-                        padding: '0.4rem 0.9rem',
-                        cursor: reviewLoading || reviewCode.trim().length === 0 ? 'not-allowed' : 'pointer',
-                        opacity: reviewCode.trim().length === 0 ? 0.4 : 1,
-                      }}
-                      whileHover={reviewCode.trim().length > 0 ? { scale: 1.04 } : {}}
-                      whileTap={reviewCode.trim().length > 0 ? { scale: 0.97 } : {}}
-                    >
-                      {reviewLoading ? '…' : 'Review'}
-                    </motion.button>
-                  </div>
-                  {reviewError && (
-                    <p style={{
-                      fontFamily: F.body,
-                      fontSize: 'clamp(0.6rem, 0.75vw, 0.68rem)',
-                      color: 'rgba(255,120,120,0.7)',
-                    }}>
-                      Session not found
-                    </p>
-                  )}
-                </div>
               </motion.div>
             ) : (
               <motion.div
