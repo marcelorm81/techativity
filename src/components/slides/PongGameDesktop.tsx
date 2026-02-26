@@ -97,15 +97,20 @@ export default function PongGameDesktop() {
     function ballSpeed() {
       return Math.min(SPEED_BASE + state.level * SPEED_PER_LVL, MAX_SPEED);
     }
+    // AI tracking: starts slow (lerp + hard px/frame cap), gets sharper each level
     function aiLerp() {
-      return Math.min(0.04 + state.level * 0.014, 0.22);
+      return Math.min(0.016 + state.level * 0.018, 0.20);
+    }
+    function aiMaxMove() {
+      return 3 + state.level * 1.1; // px per frame the AI can shift, capped
     }
 
     function resetBall() {
       const { w, h } = state;
       state.bx = w / 2;
       state.by = h / 2;
-      const spd = ballSpeed();
+      // Always reset at base speed so neither player gets a free point after a score
+      const spd = SPEED_BASE;
       const angle = (Math.random() - 0.5) * 0.8;
       state.bvx = Math.sin(angle) * spd;
       state.bvy = (Math.random() > 0.5 ? 1 : -1) * Math.cos(angle) * spd;
@@ -153,7 +158,10 @@ export default function PongGameDesktop() {
       state.px = Math.max(pw / 2, Math.min(w - pw / 2, state.px));
 
       // ── AI paddle ──────────────────────────────────────────────────
-      state.ax += (state.bx - state.ax) * aiLerp();
+      // Lerp gives smooth tracking; hard px/frame cap keeps early levels beatable
+      const aiDelta = (state.bx - state.ax) * aiLerp();
+      const maxMove = aiMaxMove();
+      state.ax += Math.max(-maxMove, Math.min(maxMove, aiDelta));
       state.ax = Math.max(pw / 2, Math.min(w - pw / 2, state.ax));
 
       // ── Ball movement ──────────────────────────────────────────────
