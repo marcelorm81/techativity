@@ -4,6 +4,7 @@ import {
   createSession,
   updateSessionMetadata,
   subscribeToParticipants,
+  sessionExists,
   type Participant,
   type SessionMetadata,
 } from '../lib/firebase';
@@ -61,12 +62,23 @@ export function usePresenterSession() {
     });
   }, [sessionId]);
 
+  // Load an existing past session (read-only review)
+  const loadSession = useCallback(async (code: string): Promise<boolean> => {
+    const exists = await sessionExists(code.toUpperCase());
+    if (exists) {
+      setSessionId(code.toUpperCase());
+      return true;
+    }
+    return false;
+  }, []);
+
   return {
     sessionId,
     participants,
     participantCount: Object.keys(participants).length,
     isCreating,
     startSession,
+    loadSession,
     activateQuestion,
     updateSlide,
     closeSession,

@@ -40,6 +40,7 @@ export default function PresenterPage() {
     participantCount,
     isCreating,
     startSession,
+    loadSession,
     activateQuestion,
     updateSlide,
     closeSession,
@@ -48,6 +49,9 @@ export default function PresenterPage() {
 
   const [showSetup, setShowSetup] = useState(true);
   const [activeQ, setActiveQ] = useState<'none' | 'q1' | 'q2' | 'q3' | 'q4'>('none');
+  const [reviewCode, setReviewCode] = useState('');
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewError, setReviewError] = useState(false);
 
   // Build join URL
   const joinUrl = useMemo(() => {
@@ -112,6 +116,21 @@ export default function PresenterPage() {
   // Skip setup (offline mode)
   const handleSkipSetup = () => {
     setShowSetup(false);
+  };
+
+  // Review a past session by code
+  const handleReview = async () => {
+    const code = reviewCode.trim().toUpperCase();
+    if (!code) return;
+    setReviewLoading(true);
+    setReviewError(false);
+    const found = await loadSession(code);
+    setReviewLoading(false);
+    if (found) {
+      setShowSetup(false);
+    } else {
+      setReviewError(true);
+    }
   };
 
   // ── Setup screen ───────────────────────────────────────────────────
@@ -193,6 +212,70 @@ export default function PresenterPage() {
                 >
                   Present Offline (no Q&A)
                 </motion.button>
+
+                {/* Review past session */}
+                <div className="flex flex-col items-center mt-6" style={{ gap: '0.5rem' }}>
+                  <p style={{
+                    fontFamily: F.body,
+                    fontSize: 'clamp(0.65rem, 0.85vw, 0.75rem)',
+                    color: 'rgba(255,255,255,0.28)',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                  }}>
+                    Review past session
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={reviewCode}
+                      onChange={e => { setReviewCode(e.target.value.toUpperCase()); setReviewError(false); }}
+                      onKeyDown={e => e.key === 'Enter' && handleReview()}
+                      placeholder="SESSION CODE"
+                      maxLength={6}
+                      style={{
+                        fontFamily: F.title,
+                        fontSize: 'clamp(0.85rem, 1.1vw, 1rem)',
+                        background: 'rgba(255,255,255,0.07)',
+                        border: reviewError ? '1.5px solid rgba(255,100,100,0.5)' : '1.5px solid rgba(255,255,255,0.18)',
+                        borderRadius: '0.5rem',
+                        color: C.white,
+                        padding: '0.4rem 0.75rem',
+                        width: '9rem',
+                        letterSpacing: '0.12em',
+                        outline: 'none',
+                        textAlign: 'center',
+                      }}
+                    />
+                    <motion.button
+                      onClick={handleReview}
+                      disabled={reviewLoading || reviewCode.trim().length === 0}
+                      style={{
+                        fontFamily: F.title,
+                        fontSize: 'clamp(0.75rem, 0.95vw, 0.85rem)',
+                        background: 'rgba(255,255,255,0.1)',
+                        border: '1.5px solid rgba(255,255,255,0.22)',
+                        borderRadius: '0.5rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        padding: '0.4rem 0.9rem',
+                        cursor: reviewLoading || reviewCode.trim().length === 0 ? 'not-allowed' : 'pointer',
+                        opacity: reviewCode.trim().length === 0 ? 0.4 : 1,
+                      }}
+                      whileHover={reviewCode.trim().length > 0 ? { scale: 1.04 } : {}}
+                      whileTap={reviewCode.trim().length > 0 ? { scale: 0.97 } : {}}
+                    >
+                      {reviewLoading ? '…' : 'Review'}
+                    </motion.button>
+                  </div>
+                  {reviewError && (
+                    <p style={{
+                      fontFamily: F.body,
+                      fontSize: 'clamp(0.6rem, 0.75vw, 0.68rem)',
+                      color: 'rgba(255,120,120,0.7)',
+                    }}>
+                      Session not found
+                    </p>
+                  )}
+                </div>
               </motion.div>
             ) : (
               <motion.div

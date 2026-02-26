@@ -115,7 +115,12 @@ export function useBlobLayout(
   useEffect(() => {
     return () => {
       cancelAnimationFrame(rafRef.current);
-      engineRef.current?.clear();
+      if (engineRef.current) {
+        engineRef.current.clear();
+        engineRef.current = null;   // force re-create on remount (fixes StrictMode double-invoke)
+      }
+      prevIdsRef.current = new Set(); // reset so remount sees all answers as new
+      newIdsRef.current = new Set();
     };
   }, []);
 
