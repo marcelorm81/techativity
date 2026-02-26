@@ -95,17 +95,19 @@ function goldenAngleTargets(
   const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // ~137.5°
   const targets: Array<{ x: number; y: number }> = [];
 
-  // Scale the spread so all blobs fit within the container
-  const maxSpread = Math.min(containerW, containerH) / 2 - radius - padding;
-  const spreadFactor = maxSpread / Math.sqrt(n);
+  // Elliptical spread — use full width and full height independently
+  // so blobs fill the landscape container instead of clustering in the centre
+  const maxSpreadX = containerW / 2 - radius - padding;
+  const maxSpreadY = containerH / 2 - radius - padding;
+  const normFactor = 1 / Math.sqrt(n);
 
   for (let i = 0; i < n; i++) {
-    const r = spreadFactor * Math.sqrt(i + 0.5);
+    const r = Math.sqrt(i + 0.5) * normFactor;
     const theta = i * goldenAngle;
     const x = Math.max(radius + padding, Math.min(containerW - radius - padding,
-      cx + r * Math.cos(theta)));
+      cx + maxSpreadX * r * Math.cos(theta)));
     const y = Math.max(radius + padding, Math.min(containerH - radius - padding,
-      cy + r * Math.sin(theta)));
+      cy + maxSpreadY * r * Math.sin(theta)));
     targets.push({ x, y });
   }
 
