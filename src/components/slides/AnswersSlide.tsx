@@ -239,9 +239,9 @@ export default function AnswersSlide({ slide, answers = [] }: AnswersSlideProps)
   const { positions } = useBlobLayout(answers, {
     width: containerSize.width,
     height: containerSize.height,
-    padding: 6,
-    maxRadius: Math.min(containerSize.width, containerSize.height) * 0.19,
-    minRadius: Math.min(containerSize.width, containerSize.height) * 0.055,
+    padding: 8,
+    maxRadius: containerSize.height * 0.30,
+    minRadius: containerSize.height * 0.09,
   });
 
   const themeLabels: Record<QuestionTheme, string> = {
