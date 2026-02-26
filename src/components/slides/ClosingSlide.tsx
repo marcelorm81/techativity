@@ -89,21 +89,23 @@ export default function ClosingSlide({
       {/* Back button — needed since ← arrow key is captured by the game */}
       {onPrev && (
         <motion.button
-          className="absolute top-4 left-5 z-30 flex items-center gap-1.5"
+          className="absolute z-30 rounded-full"
           onClick={onPrev}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.28 }}
-          whileHover={{ opacity: 0.65 }}
+          animate={{ opacity: 0.5 }}
+          whileHover={{ opacity: 0.9 }}
           transition={{ delay: 1.5, duration: 0.6 }}
           style={{
+            top: 'clamp(12px, 2.2%, 22px)',
+            left: 'clamp(14px, 2%, 24px)',
             fontFamily: F.body,
-            fontSize: 'clamp(0.5rem, 0.7vw, 0.62rem)',
+            fontSize: 'clamp(0.6rem, 0.85vw, 0.78rem)',
             color: C.white,
-            letterSpacing: '0.05em',
-            background: 'none',
-            border: 'none',
+            letterSpacing: '0.07em',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.30)',
             cursor: 'pointer',
-            padding: '4px 8px',
+            padding: 'clamp(5px, 0.8%, 8px) clamp(12px, 1.5%, 20px)',
           }}
         >
           ← back

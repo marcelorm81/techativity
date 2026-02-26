@@ -1,11 +1,15 @@
 // useSlideNavigation.ts — Keyboard navigation for slides
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { SLIDES } from '../data/slides-data';
 
 export function useSlideNavigation() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1); // 1 = forward, -1 = back
   const totalSlides = SLIDES.length;
+
+  // Ref so the keydown handler always reads the latest slide without re-registering
+  const currentSlideRef = useRef(currentSlide);
+  useEffect(() => { currentSlideRef.current = currentSlide; }, [currentSlide]);
 
   const goNext = useCallback(() => {
     setCurrentSlide((prev) => {
@@ -48,14 +52,25 @@ export function useSlideNavigation() {
         return;
       }
 
+      // On the closing slide, arrow keys are owned by the pong game
+      const isClosing = SLIDES[currentSlideRef.current]?.type === 'closing';
+
       switch (e.key) {
         case 'ArrowRight':
+          if (isClosing) return;
+          e.preventDefault();
+          goNext();
+          break;
         case ' ':
         case 'PageDown':
           e.preventDefault();
           goNext();
           break;
         case 'ArrowLeft':
+          if (isClosing) return;
+          e.preventDefault();
+          goPrev();
+          break;
         case 'PageUp':
           e.preventDefault();
           goPrev();
