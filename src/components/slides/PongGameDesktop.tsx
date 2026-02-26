@@ -4,6 +4,43 @@
 // AI: top paddle, gets progressively harder over time
 
 import { useRef, useEffect } from 'react';
+import { SHAPES } from '../../lib/organic-shapes';
+
+// Shapes that cycle on each player paddle hit (phone excluded — too narrow)
+const BALL_SHAPES = [
+  SHAPES.bird, SHAPES.cloud, SHAPES.sunBlob, SHAPES.man,
+  SHAPES.sun, SHAPES.face, SHAPES.mountain,
+] as const;
+
+type OShape = typeof BALL_SHAPES[number];
+
+/** Draw an organic SVG shape centred at (cx, cy), scaled to targetDiameter, rotated */
+function drawBallShape(
+  ctx: CanvasRenderingContext2D,
+  shape: OShape,
+  cx: number, cy: number,
+  targetDiameter: number,
+  rotation: number,
+) {
+  const scale = targetDiameter / Math.max(shape.width, shape.height);
+  const hw = (shape.width  * scale) / 2;
+  const hh = (shape.height * scale) / 2;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(rotation);
+  ctx.translate(-hw, -hh);
+  ctx.scale(scale, scale);
+
+  const path = new Path2D(shape.d);
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  if ((shape as { fillRule?: string }).fillRule === 'evenodd') {
+    ctx.fill(path, 'evenodd');
+  } else {
+    ctx.fill(path);
+  }
+  ctx.restore();
+}
 
 const PADDLE_T = 16;        // paddle thickness (px, logical)
 const BALL_R   = 9;
@@ -45,6 +82,8 @@ export default function PongGameDesktop() {
     animId: 0,
     startTime: Date.now(),
     level: 0,
+    shapeIndex: 0,   // cycles through BALL_SHAPES on each player hit
+    rotation: 0,     // accumulated rotation in radians
   });
 
   useEffect(() => {
@@ -99,6 +138,10 @@ export default function PongGameDesktop() {
       // Difficulty level
       state.level = Math.floor((Date.now() - state.startTime) / 1000 / LEVEL_SECS);
 
+      // Spin the ball — faster when the ball is moving fast
+      const ballSpd = Math.sqrt(state.bvx ** 2 + state.bvy ** 2);
+      state.rotation += ballSpd * 0.012;
+
       // ── Player paddle ──────────────────────────────────────────────
       if (state.keys.left)  state.px -= KEY_SPEED;
       if (state.keys.right) state.px += KEY_SPEED;
@@ -133,6 +176,8 @@ export default function PongGameDesktop() {
         const spd = Math.min(Math.sqrt(state.bvx ** 2 + state.bvy ** 2) * 1.05, MAX_SPEED);
         state.bvx = hit * spd * 0.7;
         state.bvy = -Math.sqrt(Math.max(spd * spd - state.bvx ** 2, spd * spd * 0.25));
+        // Cycle to next organic shape on every player hit
+        state.shapeIndex = (state.shapeIndex + 1) % BALL_SHAPES.length;
       }
 
       // AI paddle (top)
@@ -198,11 +243,14 @@ export default function PongGameDesktop() {
       ctx.fillStyle = 'rgba(255,255,255,0.88)';
       fillRoundRect(ctx, state.px - pw / 2, playerY - PADDLE_T / 2, pw, PADDLE_T, 8);
 
-      // Ball
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.beginPath();
-      ctx.arc(state.bx, state.by, BALL_R, 0, Math.PI * 2);
-      ctx.fill();
+      // Ball — organic shape, spinning, cycles on each player hit
+      drawBallShape(
+        ctx,
+        BALL_SHAPES[state.shapeIndex],
+        state.bx, state.by,
+        BALL_R * 2.2,
+        state.rotation,
+      );
 
       state.animId = requestAnimationFrame(loop);
     }
