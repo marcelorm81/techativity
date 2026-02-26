@@ -319,6 +319,7 @@ export default function PresenterPage() {
             direction={direction}
             answers={answers}
             sessionInfo={sessionId ? { sessionId, joinUrl, participantCount } : null}
+            onPrev={goPrev}
           />
         </div>
       </div>

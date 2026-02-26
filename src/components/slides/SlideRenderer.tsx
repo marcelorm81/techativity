@@ -27,6 +27,7 @@ interface SlideRendererProps {
     q4: Answer[];
   };
   sessionInfo?: SessionInfo | null;
+  onPrev?: () => void;
 }
 
 // Choose transition style based on slide type
@@ -55,6 +56,7 @@ export default function SlideRenderer({
   direction,
   answers,
   sessionInfo,
+  onPrev,
 }: SlideRendererProps) {
   function renderSlide() {
     switch (slide.type) {
@@ -78,7 +80,7 @@ export default function SlideRenderer({
       case 'content':
         return <ContentSlide slide={slide} slideNum={slideIndex + 1} />;
       case 'closing':
-        return <ClosingSlide slide={slide} />;
+        return <ClosingSlide slide={slide} onPrev={onPrev} />;
       default:
         return <div>Unknown slide type</div>;
     }
